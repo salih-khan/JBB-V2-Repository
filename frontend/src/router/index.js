@@ -1,0 +1,52 @@
+import { createRouter, createWebHistory } from 'vue-router';
+import HomeView from '../views/Home.vue';
+import Profiles from '../views/Profiles.vue';
+import ProfilePage from '../views/ProfilePage.vue';
+import { useAuthValidate } from '../composables/useAuthValidate';
+import Create from '../views/Create.vue'
+const routes = [
+  {
+    path: '/',
+    name: 'Home',
+    component: HomeView
+  },
+  {
+    path: '/create',
+    name: 'Create',
+    component: Create    
+  },
+  {
+    path: '/profiles',
+    name: 'Profiles',
+    component: Profiles,
+    // meta: { requiresAuth: true }
+  },
+  {
+    path: '/profiles/:id',
+    name: 'ProfilePage',
+    component: ProfilePage,
+    props: true // Pass route params as props to the component
+  }
+];
+
+const router = createRouter({
+  history: createWebHistory(process.env.BASE_URL),
+  routes
+});
+
+router.beforeEach(async (to, from, next) => {
+  const { isAuthenticated, fetchUser } = useAuthValidate();
+
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    await fetchUser();
+    if (isAuthenticated.value) {
+      next();
+    } else {
+      next({ name: 'Home' });
+    }
+  } else {
+    next();
+  }
+});
+
+export default router;
