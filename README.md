@@ -1,2 +1,2 @@
 # JBB V2 Repository
- Journalists Beyond Borders - :)
+ Journalists Beyond Borders
