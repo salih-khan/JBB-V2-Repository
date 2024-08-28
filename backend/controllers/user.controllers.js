@@ -2,6 +2,9 @@ const User = require('../models/user.models'); // Adjust the path if necessary
 const s3 = require('../config/aws.config');
 const path = require('path');
 
+//for uploading the images from the posts to the S3Bucket
+const Post = require('../models/post.models'); // Adjust the path if necessary
+
 // Function to get the current user
 function getUser(req, res) {
     if (req.user) {
@@ -113,8 +116,62 @@ const updateProfile = async (req, res) => {
 
         res.json(updatedUser);
     } catch (error) {
-        console.error('Error updating profile:', error);
+        console.error('Error updating profile:', error)git;
         res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
+};
+
+//upload images from posts to S3
+// Function to upload images to S3 and return URLs
+const uploadPostImagesToS3 = async (files) => {
+    try {
+        const imageUrls = await Promise.all(files.map(async (file) => {
+            const params = {
+                Bucket: process.env.S3_BUCKET_NAME,
+                Key: `posts/${userId}/${postId}/${Date.now()}_${file.originalname}${extension}`, // Include userId and postId in the path
+                Body: file.buffer,
+                ContentType: file.mimetype,
+            };
+
+            const { Location } = await s3.upload(params).promise();
+            return Location;  // Return the S3 URL
+        }));
+
+        return imageUrls;
+    } catch (error) {
+        console.error('Error uploading images to S3:', error);
+        throw new Error('Error uploading images to S3');
+    }
+};
+
+const newPost = async (req, res) => {
+    try {
+        const { title, description, date, proofs, nsfw } = req.body;
+        const files = req.files;
+        const userId = req.user._id; // Get the current user ID
+        const postId = new mongoose.Types.ObjectId(); // Generate a new ObjectId for the post
+
+        // Upload images to S3
+        const imageUrls = await uploadPostImagesToS3(files);
+
+        // Create a new post with the details and image URLs
+        const newPost = new Post({
+            _id: postId,
+            title,
+            description,
+            date: new Date(date),
+            proofs: JSON.parse(proofs),  // Assuming proofs is sent as a JSON string
+            images: imageUrls,
+            nsfw,
+        });
+        // Save the post to MongoDB
+        await newPost.save();
+
+        // Respond to the client
+        res.status(201).json({ message: 'Post created successfully', post: newPost });
+    } catch (error) {
+        console.error('Error creating post:', error);
+        res.status(500).json({ message: 'Error creating post', error: error.message });
     }
 };
 
@@ -122,4 +179,5 @@ module.exports = {
     getUser,
     getAllUsers,
     updateProfile,
+    newPost
 };

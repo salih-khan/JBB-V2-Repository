@@ -1,0 +1,10 @@
+ToDo list:
+
+
+UPCOMING
+-add gridFS as a storing option on the create page for anything above 16MB
+
+END
+-update temrs and agreements and make privacy policy
+-change the v=if="true" for the create page back to authenticated
+

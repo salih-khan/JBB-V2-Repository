@@ -39,6 +39,8 @@
             v-model="dateInfo"
             class="date-input mb-3"
           />
+
+          <p style="color: #888; font-size: 0.8em; text-align: center">At this stage all posts will be submitted to the 'Palestine' category. See dev logs for further information</p>
         </div>
 
         <div class="column column2">
@@ -127,7 +129,7 @@
             <span class="checkmark"></span>
             <span class="checkbox-text">I agree to the <button id="TAC" @click="openTACModal">terms and conditions</button></span>
           </label>
-          <button class="styled-button">Submit</button>
+          <button class="styled-button" @click="submitPost">Submit</button>
         </div>
       </div>
     </div>
@@ -306,6 +308,46 @@ export default {
       showTermsAndConditions.value = false;
     };
 
+
+    const submitPost = async () => {
+  const formData = new FormData();
+
+  // Append text data
+  formData.append('title', postTitleData.value);
+  formData.append('description', postDescriptionData.value);
+  formData.append('date', dateInfo.value);
+
+  // Append proofs data
+  proofs.value.forEach((proof, index) => {
+    formData.append(`proofs[${index}][title]`, proof.title);
+    formData.append(`proofs[${index}][source]`, proof.source);
+    formData.append(`proofs[${index}][description]`, proof.description);
+  });
+
+  // Append files
+  files.value.forEach((file) => {
+    formData.append('files', file);
+  });
+
+  // Append NSFW flag
+  formData.append('nsfw', addNSFWTag.value);
+
+  try {
+    const response = await fetch('/api/newPost', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (response.ok) {
+      alert('Post submitted successfully!');
+    } else {
+      alert('Failed to submit post');
+    }
+  } catch (error) {
+    console.error('Error submitting the post:', error);
+  }
+};
+
     return {
       showTermsAndConditions,
       files,
@@ -326,7 +368,8 @@ export default {
       removeLastProof,
       editField,
       openTACModal,
-      closeTACModal
+      closeTACModal,
+      submitPost
     };
   }
 };
