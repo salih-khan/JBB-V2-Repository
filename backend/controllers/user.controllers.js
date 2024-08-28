@@ -1,6 +1,12 @@
 const User = require('../models/user.models'); // Adjust the path if necessary
 const s3 = require('../config/aws.config');
 const path = require('path');
+const mongoose = require('mongoose'); // <-- Add this line
+
+//for uploading the images from the posts to the S3Bucket
+let Post; // Initialize a variable to hold the Post model
+const initializeModels = require('../models/post.models'); // Import model initialization
+
 
 // Function to get the current user
 function getUser(req, res) {
@@ -118,8 +124,87 @@ const updateProfile = async (req, res) => {
     }
 };
 
+//upload images from posts to S3
+// Function to upload images to S3 and return URLs
+const uploadPostImagesToS3 = async (files, nameId, postId) => {
+    try {
+        const imageUrls = await Promise.all(files.map(async (file) => {
+            const extension = file.originalname.split('.').pop(); // Get the file extension
+
+            const params = {
+                Bucket: process.env.S3_BUCKET_NAME,
+                Key: `posts/${nameId}/${postId}/${Date.now()}_${file.originalname}`, // Include userId and postId in the path
+                Body: file.buffer,
+                ContentType: file.mimetype,
+            };
+
+            const { Location } = await s3.upload(params).promise();
+            return Location;  // Return the S3 URL
+        }));
+
+        return imageUrls;
+    } catch (error) {
+        console.error('Error uploading images to S3:', error);
+        throw new Error('Error uploading images to S3');
+    }
+};
+
+
+// Ensure Post model is initialized
+const initializePostModel = async () => {
+    if (!Post) {
+      Post = await initializeModels(); // Initialize and assign Post model
+    }
+  };
+
+const newPost = async (req, res) => {
+    try {
+        await initializePostModel(); // Ensure Post is initialized
+
+        const { title, description, date, proofs, nsfw } = req.body;
+        const files = req.files;
+        const nameId = req.user.nameId; // Get the user's nameId
+        const postId = new mongoose.Types.ObjectId(); // Generate a new ObjectId for the post
+
+        // Upload images to S3 using the postId to organize them
+        const imageUrls = await uploadPostImagesToS3(files, nameId, postId);
+
+        // Check if proofs are already an array or object
+        let parsedProofs;
+        if (typeof proofs === 'string') {
+            parsedProofs = JSON.parse(proofs);  // Parse if proofs is a JSON string
+        } else {
+            parsedProofs = proofs;  // Use directly if it's already an object/array
+        }
+
+        // Create a new post with the details and image URLs
+        // Create a new post with the details and image URLs
+        const newPost = new Post({
+            _id: postId,
+            title,
+            description,
+            date: new Date(date),
+            proofs: parsedProofs,
+            images: imageUrls,
+            nsfw,
+            nameId: nameId
+        });
+
+        // Save the post to MongoDB
+        await newPost.save();
+
+        // Respond to the client
+        res.status(201).json({ message: 'Post created successfully', post: newPost });
+    } catch (error) {
+        console.error('Error creating post:', error);
+        res.status(500).json({ message: 'Error creating post', error: error.message });
+    }
+};
+
+
 module.exports = {
     getUser,
     getAllUsers,
     updateProfile,
+    newPost
 };
