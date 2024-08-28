@@ -1,25 +1,33 @@
 const mongoose = require('mongoose');
+const { connectPostsDB } = require('../config/db.config');
 
-// Sub-schema for proofs
-const proofSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  source: { type: String, required: true },
-  description: { type: String, required: true },
-}, { _id: false });  // _id is set to false to prevent creation of separate IDs for each proof
+const initializeModels = async () => {
+  const postsDbConnection = await connectPostsDB();
 
-// Main schema for the post
-const postSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  description: { type: String, required: true },
-  date: { type: Date, required: true },
-  proofs: [proofSchema],  // Array of proofs
-  images: [String],       // Array of S3 image URLs
-  nsfw: { type: Boolean, default: false },  // Flag for NSFW content
-}, {
-  collection: 'palestine'  // The collection in MongoDB
-});
+  // Sub-schema for proofs
+  const proofSchema = new mongoose.Schema({
+    title: { type: String, required: true },
+    source: { type: String, required: true },
+    description: { type: String, required: true },
+  }, { _id: false });
 
-// Model for the post schema
-const Post = mongoose.model('Post', postSchema);
+  // Main schema for the post
+  const postSchema = new mongoose.Schema({
+    title: { type: String, required: true },
+    description: { type: String, required: true },
+    date: { type: Date, required: true },
+    proofs: [proofSchema],  // Array of proofs
+    images: [String],       // Array of S3 image URLs
+    nsfw: { type: Boolean, default: false },  // Flag for NSFW content
+    nameId: { type: String }
+  }, {
+    collection: 'palestine'  // The collection in MongoDB
+  });
 
-module.exports = Post;
+  // Model for the post schema
+  const Post = postsDbConnection.model('Post', postSchema);
+
+  return Post;
+};
+
+module.exports = initializeModels;

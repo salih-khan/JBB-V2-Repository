@@ -326,7 +326,7 @@ export default {
 
   // Append files
   files.value.forEach((file) => {
-    formData.append('files', file);
+    formData.append('images', file);
   });
 
   // Append NSFW flag
@@ -340,6 +340,8 @@ export default {
 
     if (response.ok) {
       alert('Post submitted successfully!');
+
+      window.location = '/';
     } else {
       alert('Failed to submit post');
     }
