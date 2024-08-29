@@ -35,7 +35,7 @@
   
         <!-- Posts Section -->
         <div class="posts-section container-sm mt-4">
-          <h3 class="mb-4">Posts</h3>
+          <h3 class="mb-4" style="text-align: left;">Posts</h3>
   
           <div v-if="posts.length === 0" class="text-center text-muted">
             There is nothing to show at this moment
@@ -50,8 +50,7 @@
                 </div>
                 <div class="post-overlay">
                 <h5 class="post-title-default">{{ post.title }}</h5>
-                  <h5 class="post-title-hover">{{ post.title }}</h5>
-                  <p class="post-description">{{ truncateText(post.description, 25) }}</p>
+                  <p class="post-description">{{ truncateText(post.description, 100) }}</p>
                 </div>
                 <p class="post-proofs">{{ post.proofs.length }} proofs</p>
               </div>
@@ -222,24 +221,25 @@
   z-index: 1; /* Make sure proofs are above other content */
 }
 
-.post-title-default{
-  margin-top: 50%;
+.post-title-default {
   font-size: 1.25rem;
-  color: #eee; /* Hover title color */
+  color: #eee;
   text-align: center;
-  opacity: 1; /* Hidden by default */
+  opacity: 1;
   transition: opacity 0.3s ease;
-  z-index: 5; 
-  background: rgba(0, 0, 0, 0.5); /* Dark overlay */
+  z-index: 5;
+  background: rgba(0, 0, 0, 0.5);
   border-radius: 10px;
   padding: 10px;
+  transform: translateY(100%);
+  transition: display 0.3s ease;
 }
+
 .post-title-hover {
   font-size: 1.25rem;
-  color: #fff; /* Hover title color */
-  margin: 0;
+  color: #fff;
   text-align: center;
-  opacity: 0; /* Hidden by default */
+  opacity: 0;
   transition: opacity 0.3s ease;
   z-index: 2;
 }
@@ -247,10 +247,13 @@
 .post-description {
   font-size: 1rem;
   color: #fff;
-  text-align: justify;
-  opacity: 0; /* Hidden by default */
+  text-align: justify;  /* Ensure text is centered */
+  opacity: 0;
   transition: opacity 0.3s ease;
   z-index: 2;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 5px;
+  border-radius: 10px;
 }
 
 .post-overlay {
@@ -264,30 +267,31 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  opacity: 1; /* visible by default since the default title that should be visible is resting on here so the effects are being moved onto hover */
+  justify-content: center; /* Center content vertically */
+  align-items: center;     /* Center content horizontally */
+  opacity: 1;
   transition: opacity 0.3s ease;
   z-index: 1;
 }
 
-/* Show overlay content on hover */
-.post-card:hover .post-overlay {
-  opacity: 1;
-  background: rgba(0, 0, 0, 0.5); /* Dark overlay */
-}
-.post-card:hover .post-title-default{
-    opacity: 0; /* Hidden by default */
-}
-
-.post-card:hover .post-title-hover {
-  opacity: 1;
-}
-
+.post-card:hover ,
 .post-card:hover .post-description {
   opacity: 1;
 }
+.post-card:hover{
+    cursor: pointer;
+}
+.post-card:hover .post-title-default {
+  opacity: 0;
+  display: none;
+}
 
+
+
+.post-card:hover .post-description {
+  opacity: 1;
+  text-align: center; /* Center the description horizontally */
+}
 /* Media Query for Smaller Devices */
 @media (max-width: 768px) {
   #pfp {
