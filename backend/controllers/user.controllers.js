@@ -201,10 +201,26 @@ const newPost = async (req, res) => {
     }
 };
 
+// Function to get all posts
+const getAllPosts = async (req, res) => {
+    try {
+        await initializePostModel(); // Ensure Post is initialized
 
+        // Fetch all posts from the database
+        const posts = await Post.find();
+        console.log("Posts from the user.controller.js: ", posts);
+
+        // Respond with the posts
+        res.status(200).json(posts);
+    } catch (error) {
+        console.error('Error fetching posts:', error);
+        res.status(500).json({ message: 'Error fetching posts', error: error.message });
+    }
+};
 module.exports = {
     getUser,
     getAllUsers,
     updateProfile,
-    newPost
+    newPost,
+    getAllPosts
 };

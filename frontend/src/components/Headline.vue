@@ -8,7 +8,7 @@
               <img src="https://wallpapercave.com/wp/wp2747062.jpg" :class="imgClass" alt="Main headline" style="object-fit: cover;">
             </div>
             <div class="col-md-6 d-flex flex-column justify-content-start p-3">
-              <h5 class="card-title">This will be a proper headline in the future that will be longer</h5>
+              <h5 class="card-title">{{post.title}}</h5>
               <div class="d-flex mb-2">
                 <button class="btn btn-secondary btn-sm icons">Icon 1</button>
                 <button class="btn btn-secondary btn-sm icons">Icon 2</button>
@@ -32,6 +32,8 @@
     components: {
       discordInvite
     },
+    props: ['post'],
+
     setup() {
       const description = ref(`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`);
   
