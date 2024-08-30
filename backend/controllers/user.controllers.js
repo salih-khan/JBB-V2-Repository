@@ -172,7 +172,7 @@ const uploadPostImagesToS3 = async (files, nameId, postId) => {
 
 // Ensure Post model is initialized
 const initializePostModel = async () => {
-    if (!Post) {
+    if (!Post || Post == "undefined" || Post == null) {
         Post = await initializeModels(); // Initialize and assign Post model
     }
 };
@@ -283,12 +283,13 @@ const getAllPostsFromUser = async (req, res, nameId) => {
 };
 
 
-const getAllPosts = async () => {
+const getAllPosts = async (req, res) => {
     try {
         const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
         const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0, 23, 59, 59);
 
-        const Post = await initializeModels();
+        await initializePostModel(); // Ensure Post is initialized
+        console.log("Post Model: ", Post)
         const posts = await Post.find({
             date: {
                 $gte: startOfMonth,
@@ -299,11 +300,11 @@ const getAllPosts = async () => {
         }); // Sort by most recent date first
 
         console.log("posts are: ", posts)
-        return posts
+        res.status(200).json(posts);
 
     } catch(err) {
         console.log("Error whilst getting all posts: ", err);
-        throw err; // Optionally rethrow the error after logging it
+        res.status(500).json({ error: 'Failed to fetch posts' }); // Send error response
     }
 }
 

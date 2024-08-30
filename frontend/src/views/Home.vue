@@ -39,23 +39,25 @@ export default {
     };
 
     const loadAllPosts = async () => {
-      try {
-        const response = await axios.get('/api/getAllPosts');
-        const posts = response.data;
+  try {
+    const response = await axios.get('/api/getAllPosts');
+    console.log('API response:', response);
+    const posts = response.data;
 
-        if (Array.isArray(posts) && posts.length > 0) {
-          firstItem.value = posts[0];
-          restOfItems.value = posts.slice(1);
-        }
+    if (Array.isArray(posts) && posts.length > 0) {
+      firstItem.value = posts[0];
+      restOfItems.value = posts.slice(1);
+    }
 
-        console.log("First item: ", firstItem);
-        console.log("Everything else: ", restOfItems);
-      } catch (error) {
-        console.error('Failed to load posts:', error);
-      }
-    };
+    console.log("First item: ", firstItem.value);
+    console.log("Everything else: ", restOfItems.value);
+  } catch (error) {
+    console.error('Failed to load posts:', error);
+  }
+};
 
     onMounted(() => {
+      console.log("Component triggered");
       loadAllPosts();
     });
 
