@@ -18,43 +18,45 @@
         </div>
       </div>
     </div>
-  </div>
-</template>
-<script>
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { ref, computed } from 'vue';
-import discordInvite from '../components/discordInvite.vue';
+  </template>
+  
+  
+  
+  <script>
+  import 'bootstrap/dist/css/bootstrap.min.css';
+  import {ref, computed} from 'vue'
+  import discordInvite from '../components/discordInvite.vue'
+  export default {
+    name: 'NewsCard',
+    components: {
+      discordInvite
+    },
+    props: ['post'],
 
-export default {
-  name: 'Headline',
-  components: {
-    discordInvite
-  },
-  props: {
-    post: {
-      type: Object,
-      required: true
-    }
-  },
-  setup(props) {
-    const description = ref(props.post.description || '');
-
-    const truncatedDescription = computed(() => {
-      return description.value.length > 150 ? description.value.substring(0, 150) + '...' : description.value;
-    });
-
-    const imgClass = computed(() => {
-      return window.innerWidth <= 574 ? 'img-fluid small-img' : 'img-fluid medium-img';
-    });
-
-    return {
-      description,
-      truncatedDescription,
-      imgClass
-    };
+    setup() {
+      const description = ref(`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`);
+  
+      const truncatedDescription = computed(() => {
+        return description.value.length > 150 ? description.value.substring(0, 150) + '...' : description.value;
+      });
+  
+      const imgClass = computed(() => {
+        if(window.innerWidth <= 574){
+            return 'img-fluid medium-img';
+        }else{
+            return 'img-fluid medium-img';
+        }
+      });
+  
+      return {
+        description,
+        truncatedDescription,
+        imgClass
+      };
   }
 };
 </script>
+
 <style scoped>
 .card {
   border: none;

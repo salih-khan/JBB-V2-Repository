@@ -20,6 +20,8 @@
   
   export default {
     name: 'CardGrid',
+    props: ['posts'],
+    
     setup() {
       const cards = ref([
         {

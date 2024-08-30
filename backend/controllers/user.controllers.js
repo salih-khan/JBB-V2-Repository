@@ -233,7 +233,6 @@ const newPost = async (req, res) => {
     }
 };
 
-
 //this is a function to get all the posts made by a user 
 //the user is an arg to be passed in so it can be re-used many times
 //this function is used on ProfilePage.vue when loading in

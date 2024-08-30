@@ -12,12 +12,13 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import axios from 'axios'; // Make sure axios is imported
 import Header from '@/components/Header.vue';
 import InfoBar from '@/components/InfoBar.vue';
 import Headline from '@/components/Headline.vue';
 import NewsSection from '@/components/NewsSection.vue';
+import axios from 'axios';
 import Footer from '@/components/Footer.vue';
+
 
 export default {
   name: 'HomeView',
@@ -42,23 +43,20 @@ export default {
         const response = await axios.get('/api/getAllPosts');
         const posts = response.data;
 
-        if (posts.length === 0) {
-          return [null, []];
+        if (Array.isArray(posts) && posts.length > 0) {
+          firstItem.value = posts[0];
+          restOfItems.value = posts.slice(1);
         }
 
-        const [firstItem, ...restOfItems] = posts;
-
-        return [firstItem, restOfItems];
+        console.log("First item: ", firstItem);
+        console.log("Everything else: ", restOfItems);
       } catch (error) {
-        console.error("Error fetching posts: ", error);
-        return [null, []];
+        console.error('Failed to load posts:', error);
       }
     };
 
-    onMounted(async () => {
-      const [item, rest] = await loadAllPosts();
-      firstItem.value = item;
-      restOfItems.value = rest;
+    onMounted(() => {
+      loadAllPosts();
     });
 
     return {

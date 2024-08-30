@@ -1,5 +1,6 @@
 const express = require('express');
 const { getUser, getAllUsers, updateProfile, newPost, getAllPostsFromUser, getAllPosts } = require('../controllers/user.controllers.js');
+
 const router = express.Router();
 const multer = require('multer');
 
@@ -26,6 +27,8 @@ router.get('/api/auth/check-session', (req, res) => {
 router.post('/api/newPost', upload.array('images'), newPost);
 
 router.get('/api/getAllUsers', getAllUsers);
+
+router.get('/api/getAllPosts', getAllPosts);
 
 router.post('/api/updateProfile', upload.fields([{ name: 'bannerImage' }, { name: 'pfp' }]), (req, res, next) => {
     console.log("Inside upload middleware");
