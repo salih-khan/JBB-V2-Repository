@@ -1,163 +1,95 @@
 <template>
-  <div class="profile">
-    <Header />
-
-    <div class="main-info container-lg">
-      <div class="banner-image" :style="{ backgroundImage: 'url(' + bannerImage + ')' }"></div>
-      <div class="row2 d-flex container">
-        <img :src="pfp" alt="pfp" id="pfp">
-        <div class="row2-inner d-flex align-items-center rounded">
-          <div>
-            <h1 style="color: #333;">{{ displayName }}</h1>
-            <h6 style="color: #888;">{{ nameId }}</h6>
+    <div class="profile">
+      <Header />
+  
+      <div class="main-info container-lg">
+        <div class="banner-image" :style="{ backgroundImage: 'url(' + bannerImage + ')' }"></div>
+        <div class="row2 d-flex container">
+          <img :src="pfp" alt="pfp" id="pfp">
+          <div class="row2-inner d-flex align-items-center rounded">
+            <div>
+              <h1 style="color: #333;">{{ displayName }}</h1>
+              <h6 style="color: #888;">{{ nameId }}</h6>
+            </div>
           </div>
-        </div>
-        <div v-if="isCurrentUser" class="edit-buttons d-none d-lg-block ms-3">
-          <div class="edit-box" @click="showProfileEditor">
-            <i class="bi bi-pencil"></i>
+          <div v-if="isCurrentUser" class="edit-buttons d-none d-lg-block ms-3">
+            <div class="edit-box" @click="showProfileEditor">
+              <i class="bi bi-pencil"></i>
+            </div>
           </div>
         </div>
       </div>
+  
+      <div class="profile-inner container">
+        <div class="image-headers container">
+          <div class="desc">
+            <h2>Bio</h2>
+            <p>{{ description }}</p>
+          </div>
+          <div v-if="isCurrentUser" class="edit-buttons d-lg-none">
+            <div class="edit-box" @click="showProfileEditor">
+              <i class="bi bi-pencil"></i>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Posts Section -->
+        <div class="posts-section container-sm mt-4">
+          <h3 class="mb-4" style="text-align: left;">Posts</h3>
+  
+          <div v-if="posts.length === 0" class="text-center text-muted">
+            There is nothing to show at this moment
+          </div>
+  
+          <div v-else class="posts-grid">
+            <div v-for="post in posts" :key="post._id" class="post-card">
+              <div class="post-image-container">
+                <img :src="post.images && post.images.length > 0 ? post.images[0] : 'https://www.vocaleurope.eu/wp-content/uploads/no-image.jpg'" class="post-image" :alt="post.title" />
+                <div v-if="post.images.length > 1" class="more-images-badge">
+                  +{{ post.images.length - 1 }} more
+                </div>
+                <div class="post-overlay">
+                <h5 class="post-title-default">{{ post.title }}</h5>
+                  <p class="post-description">{{ truncateText(post.description, 100) }}</p>
+                </div>
+                <p class="post-proofs">{{ post.proofs.length }} proofs</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Update Profile Info Modal -->
+      <updateProfileInfo v-if="showProfileEditorBool && isAuthenticated && isCurrentUser" @close="closeProfileEditor" @profileUpdated="handleProfileUpdated" />
     </div>
-
-    <div class="profile-inner container">
-      <div class="image-headers container">
-        <div class="desc">
-          <h2>Bio</h2>
-          <p>{{ description }}</p>
-        </div>
-        <div v-if="isCurrentUser" class="edit-buttons d-lg-none">
-          <div class="edit-box" @click="showProfileEditor">
-            <i class="bi bi-pencil"></i>
-          </div>
-        </div>
-      </div>
-
-      <div class="container-sm creations">
-        <h3>Posts</h3>
-        <p style="color: #888">There is nothing to show at this moment</p>
-      </div>
-    </div>
-
-    <updateProfileInfo v-if="showProfileEditorBool && isAuthenticated && isCurrentUser"   
-    @close="closeProfileEditor"
-    @profileUpdated="handleProfileUpdated"/>
-
-  </div>
-</template>
-
-
-<script>
-import { onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
-import { useAuthValidate } from '../composables/useAuthValidate';
-import Header from '@/components/Header.vue';
-import Footer from '@/components/Footer.vue';
-import axios from 'axios';
-import updateProfileInfo from '@/components/updateProfileInfo.vue';
-
-export default {
-  name: 'Profile',
-  components: {
-    Header,
-    Footer,
-    updateProfileInfo
-  },
-  setup() {
-    const { isAuthenticated, fetchUser, user } = useAuthValidate();
-    const route = useRoute();
-
-    const displayName = ref('');
-    const nameId = ref('');
-    const description = ref('');
-    const bannerImage = ref('');
-    const pfp = ref('');
-    const isCurrentUser = ref(false);
-
-    const showProfileEditorBool = ref(false);
-
-    const getAccountInfo = async (id) => {
-      try {
-        const response = await axios.get('/api/getAllUsers');
-        const users = response.data;
-        console.log('API Response:', users);
-
-        const currentUser = users.find(user => user._id === id);
-        if (currentUser) {
-          displayName.value = currentUser.displayName;
-          nameId.value = currentUser.nameId;
-          description.value = currentUser.description;
-          bannerImage.value = currentUser.bannerImage;
-          pfp.value = currentUser.imageUrl;
-
-          // Check if the current profile belongs to the logged-in user
-          isCurrentUser.value = user.value && currentUser._id === user.value._id;
-
-          console.log("Value of displayName and other attributes: ", currentUser);
-          console.log("Is Current User: ", isCurrentUser.value);
-        } else {
-          console.error('User not found');
-        }
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    };
-
-    const showProfileEditor = () => {
-      console.log("Being Clicked");
-      showProfileEditorBool.value = true;
-    }
-
-    const closeProfileEditor = () => {
-      showProfileEditorBool.value = false;
-    }
-
-    const handleProfileUpdated = () => {
-      window.location.reload(); // Reload the page
-    }
-
-    onMounted(() => {
-      const userId = route.params.id;
-      fetchUser().then(() => {
-        getAccountInfo(userId);
-      });
-    });
-
-    return {
-      isAuthenticated,
-      displayName,
-      nameId,
-      description,
-      pfp,
-      bannerImage,
-      showProfileEditor,
-      showProfileEditorBool,
-      closeProfileEditor,
-      handleProfileUpdated,
-      isCurrentUser
-    };
-  }
-};
-</script>
+  </template>
 
 <style scoped>
 #pfp {
   height: 250px;
   width: 250px;
   border-radius: 1rem;
-  text-align: left;
   object-fit: cover;
   z-index: 6;
 }
 
+/* Banner Image */
 .banner-image {
   width: 100%;
   height: auto;
   background-size: cover;
-  padding-top: 33.3%; /* Adjust this value to change the aspect ratio */
+  padding-top: 33.3%;
   object-fit: cover;
 }
 
+/* Card Image */
+.card-img-top {
+  height: 200px;
+  width: 100%;
+  object-fit: cover;
+}
+
+/* Profile Details Row */
 .row2 {
   text-align: left;
   margin-top: 1rem;
@@ -174,12 +106,12 @@ export default {
   padding-left: 1rem;
   padding-right: 4rem;
   width: auto;
-  border: 1px solid #888;
   background-color: white;
   transform: translateX(-0.5rem);
   z-index: 5;
 }
 
+/* Description Section */
 .desc {
   padding: 20px;
   border-radius: 10px;
@@ -208,13 +140,7 @@ export default {
   color: #666;
 }
 
-.creations {
-  text-align: left;
-  margin: auto;
-  margin-top: 3rem;
-  display: inline-block;
-}
-
+/* Edit Buttons */
 .edit-buttons {
   margin-top: auto;
   margin-bottom: auto;
@@ -238,14 +164,135 @@ export default {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.edit-icon {
-  width: 24px;
-  height: 24px;
-  background-image: url('https://cdn-icons-png.flaticon.com/512/2921/2921222.png');
-  background-size: cover;
+/* Posts Section Styles */
+.posts-section {
+  margin-top: 3rem;
 }
 
-/* Media query for devices with a width of 768px or less (phones and below) */
+/* Grid Layout for Posts */
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.post-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: #fff;
+}
+
+/* Post Image Container */
+.post-image-container {
+  position: relative;
+  height: 200px;
+}
+
+.post-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border: none; /* Remove border around the image */
+}
+
+.more-images-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+}
+
+.post-proofs {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  z-index: 1; /* Make sure proofs are above other content */
+}
+
+.post-title-default {
+  font-size: 1.25rem;
+  color: #eee;
+  text-align: center;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  z-index: 5;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  padding: 10px;
+  transform: translateY(100%);
+  transition: display 0.3s ease;
+}
+
+.post-title-hover {
+  font-size: 1.25rem;
+  color: #fff;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 2;
+}
+
+.post-description {
+  font-size: 1rem;
+  color: #fff;
+  text-align: justify;  /* Ensure text is centered */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 5px;
+  border-radius: 10px;
+}
+
+.post-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  color: #fff;
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center content vertically */
+  align-items: center;     /* Center content horizontally */
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.post-card:hover ,
+.post-card:hover .post-description {
+  opacity: 1;
+}
+.post-card:hover{
+    cursor: pointer;
+}
+.post-card:hover .post-title-default {
+  opacity: 0;
+  display: none;
+}
+
+
+
+.post-card:hover .post-description {
+  opacity: 1;
+  text-align: center; /* Center the description horizontally */
+}
+/* Media Query for Smaller Devices */
 @media (max-width: 768px) {
   #pfp {
     width: 100px;
@@ -288,5 +335,146 @@ export default {
   .row2-inner h6 {
     font-size: 15px;
   }
+
+  .post-image-container {
+    height: 150px;
+  }
+
+  .post-title-default,
+  .post-title-hover {
+    font-size: 1rem;
+  }
+
+  .post-description {
+    font-size: 0.9rem;
+  }
+
+  .posts-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
 }
 </style>
+
+<script>
+import {
+    onMounted,
+    ref
+} from 'vue';
+import {
+    useRoute
+} from 'vue-router';
+import {
+    useAuthValidate
+} from '../composables/useAuthValidate';
+import Header from '@/components/Header.vue';
+import Footer from '@/components/Footer.vue';
+import axios from 'axios';
+import updateProfileInfo from '@/components/updateProfileInfo.vue';
+
+export default {
+    name: 'Profile',
+    components: {
+        Header,
+        Footer,
+        updateProfileInfo
+    },
+    setup() {
+        const {
+            isAuthenticated,
+            fetchUser,
+            user
+        } = useAuthValidate();
+        const route = useRoute();
+
+        const displayName = ref('');
+        const nameId = ref('');
+        const description = ref('');
+        const bannerImage = ref('');
+        const pfp = ref('');
+        const isCurrentUser = ref(false);
+        const posts = ref([]); // Reactive state for storing the user's posts
+
+        const showProfileEditorBool = ref(false);
+
+        const getAccountInfo = async (id) => {
+            try {
+                const response = await axios.get('/api/getAllUsers');
+                const users = response.data;
+                console.log('API Response:', users);
+
+                const currentUser = users.find(user => user._id === id);
+                if (currentUser) {
+                    displayName.value = currentUser.displayName;
+                    nameId.value = currentUser.nameId;
+                    description.value = currentUser.description;
+                    bannerImage.value = currentUser.bannerImage;
+                    pfp.value = currentUser.imageUrl;
+
+                    // Check if the current profile belongs to the logged-in user
+                    isCurrentUser.value = user.value && currentUser._id === user.value._id;
+
+                    console.log("Value of displayName and other attributes: ", currentUser);
+                    console.log("Is Current User: ", isCurrentUser.value);
+
+                    //getting the posts now
+                    // Get the posts for the current user by their nameId
+                    const postsResponse = await axios.get(`/api/getAllPostsFromUser`, {
+                        params: {
+                            nameId: currentUser.nameId
+                        }
+                    });
+
+                    // Store the fetched posts in the reactive state
+                    posts.value = postsResponse.data;
+                    console.log('User Posts:', posts.value);
+                } else {
+                    console.error('User not found');
+                }
+            } catch (error) {
+                console.error('Error fetching users:', error);
+            }
+        };
+
+        const showProfileEditor = () => {
+            console.log("Being Clicked");
+            showProfileEditorBool.value = true;
+        }
+
+        const closeProfileEditor = () => {
+            showProfileEditorBool.value = false;
+        }
+
+        const handleProfileUpdated = () => {
+            window.location.reload(); // Reload the page
+        }
+
+        const truncateText = (text, maxLength) => {
+            if (!text) return '';
+            return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+        };
+
+        onMounted(() => {
+            const userId = route.params.id;
+            fetchUser().then(() => {
+                getAccountInfo(userId);
+            });
+        });
+
+        return {
+            isAuthenticated,
+            displayName,
+            nameId,
+            description,
+            pfp,
+            bannerImage,
+            showProfileEditor,
+            showProfileEditorBool,
+            closeProfileEditor,
+            handleProfileUpdated,
+            isCurrentUser,
+            posts,
+            truncateText
+        };
+    }
+};
+</script>

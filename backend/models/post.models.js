@@ -4,6 +4,11 @@ const { connectPostsDB } = require('../config/db.config');
 const initializeModels = async () => {
   const postsDbConnection = await connectPostsDB();
 
+    // Check if the model already exists to avoid OverwriteModelError
+    if (postsDbConnection.models.Post) {
+      return postsDbConnection.models.Post;
+    }
+    
   // Sub-schema for proofs
   const proofSchema = new mongoose.Schema({
     title: { type: String, required: true },

@@ -1,8 +1,12 @@
 ToDo list:
 
+NOW
+Add limits on the profile page to the name and bio 
+-Change it so the posts arent loaded every refresh or page change
 
 UPCOMING
 -add gridFS as a storing option on the create page for anything above 16MB
+-There is probably a more efficient system to retrieve the current logged in user rather than getting all of them so please have a look at that and implement it 
 
 END
 -update temrs and agreements and make privacy policy

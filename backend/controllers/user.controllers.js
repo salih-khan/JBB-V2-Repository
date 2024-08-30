@@ -4,7 +4,7 @@ const path = require('path');
 const mongoose = require('mongoose'); // <-- Add this line
 
 //for uploading the images from the posts to the S3Bucket
-let Post; // Initialize a variable to hold the Post model
+let Post; // Declare Post globally, but don't initialize it
 const initializeModels = require('../models/post.models'); // Import model initialization
 
 
@@ -23,7 +23,9 @@ function getUser(req, res) {
             _id: req.user._id
         });
     } else {
-        res.status(401).json({ error: 'User not authenticated' });
+        res.status(401).json({
+            error: 'User not authenticated'
+        });
     }
 }
 
@@ -34,7 +36,10 @@ const getAllUsers = async (req, res) => {
         res.status(200).json(users);
     } catch (error) {
         console.error('Error fetching users:', error);
-        res.status(500).json({ message: 'Error fetching users', error: error.message });
+        res.status(500).json({
+            message: 'Error fetching users',
+            error: error.message
+        });
     }
 };
 
@@ -76,8 +81,12 @@ const deleteFromS3 = async (fileKey) => {
 // Function to update the user's profile
 const updateProfile = async (req, res) => {
     try {
-        console.log("req.body = ", req.body);  // Add logging
-        const { displayName, userId, bio } = req.body;
+        console.log("req.body = ", req.body); // Add logging
+        const {
+            displayName,
+            userId,
+            bio
+        } = req.body;
         const bannerImage = req.files['bannerImage'] ? req.files['bannerImage'][0] : null;
         const profilePicture = req.files['pfp'] ? req.files['pfp'][0] : null;
         let description = bio;
@@ -87,7 +96,9 @@ const updateProfile = async (req, res) => {
         // Find user by _id
         const user = await User.findById(userId);
         if (!user) {
-            return res.status(404).json({ error: 'User not found' });
+            return res.status(404).json({
+                error: 'User not found'
+            });
         }
 
         // Prepare update object
@@ -115,12 +126,19 @@ const updateProfile = async (req, res) => {
         console.log('Update object:', update);
 
         // Update user in the database
-        const updatedUser = await User.findOneAndUpdate({ _id: userId }, update, { new: true });
+        const updatedUser = await User.findOneAndUpdate({
+            _id: userId
+        }, update, {
+            new: true
+        });
 
         res.json(updatedUser);
     } catch (error) {
         console.error('Error updating profile:', error);
-        res.status(500).json({ error: 'Internal server error', details: error.message });
+        res.status(500).json({
+            error: 'Internal server error',
+            details: error.message
+        });
     }
 };
 
@@ -138,8 +156,10 @@ const uploadPostImagesToS3 = async (files, nameId, postId) => {
                 ContentType: file.mimetype,
             };
 
-            const { Location } = await s3.upload(params).promise();
-            return Location;  // Return the S3 URL
+            const {
+                Location
+            } = await s3.upload(params).promise();
+            return Location; // Return the S3 URL
         }));
 
         return imageUrls;
@@ -152,16 +172,22 @@ const uploadPostImagesToS3 = async (files, nameId, postId) => {
 
 // Ensure Post model is initialized
 const initializePostModel = async () => {
-    if (!Post) {
-      Post = await initializeModels(); // Initialize and assign Post model
+    if (!Post || Post == "undefined" || Post == null) {
+        Post = await initializeModels(); // Initialize and assign Post model
     }
-  };
+};
 
 const newPost = async (req, res) => {
     try {
         await initializePostModel(); // Ensure Post is initialized
 
-        const { title, description, date, proofs, nsfw } = req.body;
+        const {
+            title,
+            description,
+            date,
+            proofs,
+            nsfw
+        } = req.body;
         const files = req.files;
         const nameId = req.user.nameId; // Get the user's nameId
         const postId = new mongoose.Types.ObjectId(); // Generate a new ObjectId for the post
@@ -172,9 +198,9 @@ const newPost = async (req, res) => {
         // Check if proofs are already an array or object
         let parsedProofs;
         if (typeof proofs === 'string') {
-            parsedProofs = JSON.parse(proofs);  // Parse if proofs is a JSON string
+            parsedProofs = JSON.parse(proofs); // Parse if proofs is a JSON string
         } else {
-            parsedProofs = proofs;  // Use directly if it's already an object/array
+            parsedProofs = proofs; // Use directly if it's already an object/array
         }
 
         // Create a new post with the details and image URLs
@@ -194,17 +220,99 @@ const newPost = async (req, res) => {
         await newPost.save();
 
         // Respond to the client
-        res.status(201).json({ message: 'Post created successfully', post: newPost });
+        res.status(201).json({
+            message: 'Post created successfully',
+            post: newPost
+        });
     } catch (error) {
         console.error('Error creating post:', error);
-        res.status(500).json({ message: 'Error creating post', error: error.message });
+        res.status(500).json({
+            message: 'Error creating post',
+            error: error.message
+        });
     }
 };
 
+//this is a function to get all the posts made by a user 
+//the user is an arg to be passed in so it can be re-used many times
+//this function is used on ProfilePage.vue when loading in
+
+const getAllPostsFromUser = async (req, res, nameId) => {
+    try {
+        const {
+            nameId
+        } = req.query; // Extract nameId from query parameters
+
+        if (!nameId) {
+            return res.status(400).json({
+                error: 'nameId is required'
+            });
+        }
+        // Fetch the user by nameId (optional, if you need to verify the user exists)
+        const user = await User.findOne({
+            nameId: nameId
+        });
+        if (!user) {
+            return res.status(404).json({
+                error: 'User not found'
+            });
+        }
+
+        // Fetch all posts by the nameId
+        const Post = await initializeModels();
+        const posts = await Post.find({
+            nameId: nameId
+        });
+
+
+        if (posts.length === 0) {
+            return res.status(404).json({
+                message: 'No posts found for this user'
+            });
+        }
+
+        // Return the posts
+        res.status(200).json(posts);
+    } catch (error) {
+        console.error('Error fetching posts:', error);
+        res.status(500).json({
+            error: 'Internal server error',
+            details: error.message
+        });
+    }
+};
+
+
+const getAllPosts = async (req, res) => {
+    try {
+        const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+        const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0, 23, 59, 59);
+
+        await initializePostModel(); // Ensure Post is initialized
+        console.log("Post Model: ", Post)
+        const posts = await Post.find({
+            date: {
+                $gte: startOfMonth,
+                $lte: endOfMonth
+            }
+        }).sort({
+            date: -1
+        }); // Sort by most recent date first
+
+        console.log("posts are: ", posts)
+        res.status(200).json(posts);
+
+    } catch(err) {
+        console.log("Error whilst getting all posts: ", err);
+        res.status(500).json({ error: 'Failed to fetch posts' }); // Send error response
+    }
+}
 
 module.exports = {
     getUser,
     getAllUsers,
     updateProfile,
-    newPost
+    newPost,
+    getAllPostsFromUser,
+    getAllPosts
 };
