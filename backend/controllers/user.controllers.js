@@ -240,20 +240,30 @@ const newPost = async (req, res) => {
 
 const getAllPostsFromUser = async (req, res, nameId) => {
     try {
-        const { nameId } = req.query; // Extract nameId from query parameters
+        const {
+            nameId
+        } = req.query; // Extract nameId from query parameters
 
         if (!nameId) {
-            return res.status(400).json({ error: 'nameId is required' });
+            return res.status(400).json({
+                error: 'nameId is required'
+            });
         }
-      // Fetch the user by nameId (optional, if you need to verify the user exists)
-      const user = await User.findOne({ nameId: nameId });
-      if (!user) {
-          return res.status(404).json({ error: 'User not found' });
-      }
+        // Fetch the user by nameId (optional, if you need to verify the user exists)
+        const user = await User.findOne({
+            nameId: nameId
+        });
+        if (!user) {
+            return res.status(404).json({
+                error: 'User not found'
+            });
+        }
 
         // Fetch all posts by the nameId
         const Post = await initializeModels();
-        const posts = await Post.find({ nameId: nameId });
+        const posts = await Post.find({
+            nameId: nameId
+        });
 
 
         if (posts.length === 0) {
@@ -273,10 +283,36 @@ const getAllPostsFromUser = async (req, res, nameId) => {
     }
 };
 
+
+const getAllPosts = async () => {
+    try {
+        const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+        const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0, 23, 59, 59);
+
+        const Post = await initializeModels();
+        const posts = await Post.find({
+            date: {
+                $gte: startOfMonth,
+                $lte: endOfMonth
+            }
+        }).sort({
+            date: -1
+        }); // Sort by most recent date first
+
+        console.log("posts are: ", posts)
+        return posts
+
+    } catch(err) {
+        console.log("Error whilst getting all posts: ", err);
+        throw err; // Optionally rethrow the error after logging it
+    }
+}
+
 module.exports = {
     getUser,
     getAllUsers,
     updateProfile,
     newPost,
-    getAllPostsFromUser
+    getAllPostsFromUser,
+    getAllPosts
 };
