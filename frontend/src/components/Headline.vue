@@ -10,8 +10,14 @@
           <div class="col-md-6 d-flex flex-column justify-content-start p-3">
             <h5 class="card-title">{{ post?.title ?? 'Default Title' }}</h5>
             <div class="d-flex mb-2">
-              <button class="btn btn-secondary btn-sm icons">Icon 1</button>
-              <button class="btn btn-secondary btn-sm icons">Icon 2</button>
+              <!-- Display number of proofs -->
+              <button class=" icons">
+                {{ post?.proofs?.length ?? 0 }} Proof{{ (post?.proofs?.length ?? 0) > 1 ? 's' : '' }}
+              </button>
+              <!-- Display number of images -->
+              <button class=" icons">
+                +{{ post?.images?.length ?? 0 }} Image{{ (post?.images?.length ?? 0) > 1 ? 's' : '' }}
+              </button>
             </div>
             <p class="card-text">{{ truncatedDescription }}</p>
           </div>
@@ -98,5 +104,11 @@ export default {
 
 .icons {
   margin-right: 0.2rem;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  z-index: 1; /* Make sure proofs are above other content */
 }
 </style>

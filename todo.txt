@@ -1,7 +1,8 @@
 ToDo list:
 
 NOW
-Add limits on the profile page to the name and bio 
+-Add proper discord invite
+-Add limits on the profile page to the name and bio 
 -Change it so the posts arent loaded every refresh or page change
 
 UPCOMING
