@@ -1,13 +1,11 @@
 <template>
   <div class="home">
-    <Header/>
-    <!-- <InfoBar message="In the near future other events and categories shall be added"/> -->
+    <Header />
     <Headline :post="firstItem"/>
     <div v-for="(section, index) in newsSections" :key="index">
       <NewsSection :posts="restOfItems"/>
     </div>
     <button @click="addNewsSection" class="btn btn-primary mt-3">Add More News</button>
-
     <Footer />
   </div>
 </template>
@@ -18,8 +16,9 @@ import Header from '@/components/Header.vue';
 import InfoBar from '@/components/InfoBar.vue';
 import Headline from '@/components/Headline.vue';
 import NewsSection from '@/components/NewsSection.vue';
-import Footer from '@/components/Footer.vue'
 import axios from 'axios';
+import Footer from '@/components/Footer.vue';
+
 
 export default {
   name: 'HomeView',
@@ -72,7 +71,7 @@ export default {
 
 <style scoped>
 .btn {
-  display: block;
-  margin: 20px auto;
+    display: block;
+    margin: 20px auto;
 }
 </style>
