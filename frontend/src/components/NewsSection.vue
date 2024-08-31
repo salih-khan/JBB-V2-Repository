@@ -13,7 +13,6 @@
         </div>
       </div>
     </div>
-    <button @click="loadMore" class="btn btn-primary mt-4">Load More</button>
   </div>
 </template>
 
@@ -42,9 +41,7 @@ export default {
       return description.length > maxLength ? description.substring(0, maxLength) + '...' : description;
     };
 
-    const loadMore = () => {
-      cardCount.value += initialCardCount;
-    };
+
 
     const getImageSrc = (images) => {
       return (images && images.length > 0 ? images[0] : 'https://via.placeholder.com/300x200');
@@ -53,7 +50,6 @@ export default {
     return {
       visibleCards,
       getDescription,
-      loadMore,
       getImageSrc
     };
   }
