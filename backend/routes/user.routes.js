@@ -6,7 +6,8 @@ const {
     updateProfile, 
     newPost, 
     getAllPostsFromUser, 
-    getAllPosts 
+    getAllPosts,
+    getAllPostsFromCategory
 } = require('../controllers/user.controllers.js');
 
 const router = express.Router();
@@ -54,5 +55,8 @@ router.post('/api/updateProfile',
 
 // Route to get all posts from a specific user
 router.get('/api/getAllPostsFromUser', getAllPostsFromUser);
+
+//for the /categorypalestine
+router.get('/api/getAllPostsFromCategory', getAllPostsFromCategory);
 
 module.exports = router;

@@ -105,6 +105,7 @@ export default {
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 8; /* Number of lines to show */
+  line-clamp: 8;
   -webkit-box-orient: vertical;
   text-align: justify;
 }

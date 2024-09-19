@@ -285,28 +285,65 @@ const getAllPostsFromUser = async (req, res, nameId) => {
 
 const getAllPosts = async (req, res) => {
     try {
+        const { page = 1, limit = 12 } = req.query; // Default page and limit
         const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
         const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0, 23, 59, 59);
 
         await initializePostModel(); // Ensure Post is initialized
-        console.log("Post Model: ", Post)
-        const posts = await Post.find({
+
+        // Fetch the most recent posts for the current month
+        let posts = await Post.find({
             date: {
                 $gte: startOfMonth,
                 $lte: endOfMonth
             }
-        }).sort({
-            date: -1
-        }); // Sort by most recent date first
+        })
+        .sort({ date: -1 })
+        .skip((page - 1) * limit) // Pagination: Skip the previous pages
+        .limit(parseInt(limit));
 
-        console.log("posts are: ", posts)
+        // If no recent posts or fewer than limit, fetch older posts
+        if (posts.length < limit) {
+            const remainingLimit = limit - posts.length;
+            const olderPosts = await Post.find({
+                date: {
+                    $lt: startOfMonth
+                }
+            })
+            .sort({ date: -1 })
+            .limit(remainingLimit);
+            posts = [...posts, ...olderPosts]; // Combine recent and older posts
+        }
+
         res.status(200).json(posts);
 
-    } catch(err) {
-        console.log("Error whilst getting all posts: ", err);
-        res.status(500).json({ error: 'Failed to fetch posts' }); // Send error response
+    } catch (err) {
+        console.error("Error fetching posts:", err);
+        res.status(500).json({ error: 'Failed to fetch posts' });
     }
-}
+};
+
+//this is refering to the Palestine buttong that takes you to 
+// '/category/palestine'
+// Function to get posts from a specific category with pagination
+const getAllPostsFromCategory = async (req, res) => {
+    try {
+        await initializePostModel(); // Ensure Post is initialized
+
+        // Fetch all posts
+        const posts = await Post.find({}).sort({ createdAt: -1 }).lean();
+
+        res.status(200).json(posts);
+    } catch (error) {
+        console.error('Error fetching posts:', error);
+        res.status(500).json({
+            error: 'Internal server error',
+            details: error.message
+        });
+    }
+};
+
+
 
 module.exports = {
     getUser,
@@ -314,5 +351,6 @@ module.exports = {
     updateProfile,
     newPost,
     getAllPostsFromUser,
-    getAllPosts
+    getAllPosts,
+    getAllPostsFromCategory
 };
