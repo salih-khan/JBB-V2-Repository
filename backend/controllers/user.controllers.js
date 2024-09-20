@@ -343,6 +343,31 @@ const getAllPostsFromCategory = async (req, res) => {
     }
 };
 
+const getIndividualPost = async (req, res) => {
+    await initializePostModel(); // Ensure Post is initialized
+
+    try {
+        // Extract the postId from the request parameters
+        const { postId } = req.params;
+
+        // Set category as 'palestine' always
+        console.log("Post ID: ", postId); //works
+
+        // Fetch the individual post from the database using postId and category
+        const post = await Post.findOne({ _id: postId });
+        console.log("post: ", post); //works
+        // Check if the post exists
+        if (!post) {
+            return res.status(404).json({ error: 'Post not found' });
+        }
+
+        // Return the post details as a response
+        res.status(200).json(post);
+    } catch (error) {
+        console.error('Error fetching post:', error);
+        res.status(500).json({ error: 'Failed to fetch post', details: error.message });
+    }
+};
 
 
 module.exports = {
@@ -352,5 +377,6 @@ module.exports = {
     newPost,
     getAllPostsFromUser,
     getAllPosts,
-    getAllPostsFromCategory
+    getAllPostsFromCategory,
+    getIndividualPost
 };

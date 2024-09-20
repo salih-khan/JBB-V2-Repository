@@ -5,6 +5,7 @@ import ProfilePage from '../views/ProfilePage.vue';
 import { useAuthValidate } from '../composables/useAuthValidate';
 import Create from '../views/Create.vue'
 import Category from '../views/Category.vue'
+import IndividualPost from '../views/IndividualPost.vue'
 const routes = [
   {
     path: '/',
@@ -32,6 +33,12 @@ const routes = [
     path: '/category/:cat',
     name: 'Category',
     component: Category,
+    props: true // Pass route params as props to the component
+  },
+  {
+    path: '/category/:cat/:postId',
+    name: 'IndividualPost',
+    component: IndividualPost,
     props: true // Pass route params as props to the component
   }
 ];

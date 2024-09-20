@@ -7,7 +7,8 @@ const {
     newPost, 
     getAllPostsFromUser, 
     getAllPosts,
-    getAllPostsFromCategory
+    getAllPostsFromCategory,
+    getIndividualPost
 } = require('../controllers/user.controllers.js');
 
 const router = express.Router();
@@ -58,5 +59,8 @@ router.get('/api/getAllPostsFromUser', getAllPostsFromUser);
 
 //for the /categorypalestine
 router.get('/api/getAllPostsFromCategory', getAllPostsFromCategory);
+
+//when the user wants to see the info for 1 post alone
+router.get('/api/getIndividualPost/:postId', getIndividualPost);
 
 module.exports = router;
