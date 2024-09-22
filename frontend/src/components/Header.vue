@@ -66,7 +66,7 @@
     </nav>
     <div class="container-fluid container-items p-2 bg-light">
       <div class="container justify-content-start d-flex">
-        <router-link class="btn btn-pink rounded-pill" :to="{ path: '/category/' + 'Palestine' }" >Palestine</router-link>
+        <router-link class="btn btn-pink rounded-pill" :to="{ path: '/category/' + 'palestine' }" >Palestine</router-link>
       </div>
     </div>
   </header>

@@ -34,7 +34,7 @@ export default {
     const firstItem = ref(null);
     const visiblePosts = ref([]);
     const page = ref(1);
-    const limit = 12;
+    const limit = 10;
     const allPostsLoaded = ref(false);
 
     const loadAllPosts = async () => {

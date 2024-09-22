@@ -2,10 +2,10 @@
   <div class="headline">
     <discordInvite />
     <div class="row">
-      <div class="col-12 d-flex align-items-stretch">
+      <div class="col-12 d-flex align-items-stretch" @click="post ? goToPost(post._id) : null">
         <div class="card w-100 d-flex flex-column flex-md-row">
           <div class="col-md-6 d-flex justify-content-center align-items-center p-0">
-            <img :src="post?.images?.[0] ?? 'https://www.vocaleurope.eu/wp-content/uploads/no-image.jpg'" :class="imgClass" alt="Main headline" style="object-fit: cover;">
+            <img :src="post?.images?.[0] ?? 'https://www.vocaleurope.eu/wp-content/uploads/no-image.jpg'" :class="imgClass" alt="Main headline" style="object-fit: cover;" >
           </div>
           <div class="col-md-6 d-flex flex-column justify-content-start p-3">
             <h5 class="card-title">{{ post?.title ?? 'Default Title' }}</h5>
@@ -31,6 +31,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ref, computed } from 'vue';
 import discordInvite from '../components/discordInvite.vue';
+import {useRouter} from 'vue-router';
 
 export default {
   name: 'NewsCard',
@@ -45,6 +46,7 @@ export default {
   },
 
   setup(props) {
+    const router = useRouter();
     // Truncated description with optional chaining and nullish coalescing
     const truncatedDescription = computed(() => {
       const description = props.post?.description ?? 'Default Description';
@@ -58,9 +60,13 @@ export default {
       return window.innerWidth <= 574 ? 'img-fluid medium-img' : 'img-fluid medium-img';
     });
 
+    const goToPost = (id) => {
+      router.push(`category/palestine/${id}`);
+    }
     return {
       truncatedDescription,
-      imgClass
+      imgClass,
+      goToPost
     };
   }
 };

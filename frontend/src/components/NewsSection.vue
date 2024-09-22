@@ -2,7 +2,7 @@
   <div class="container mt-4">
     <div class="row g-4">
       <div class="col-md-4" v-for="(card, index) in visibleCards" :key="index">
-        <div class="card border-0 d-flex flex-column align-items-center">
+        <div class="card border-0 d-flex flex-column align-items-center" @click="goToPost(card._id)">
           <div class="img-container">
             <img :src="getImageSrc(card.images)" class="card-img" alt="Card image" />
           </div>
@@ -19,6 +19,7 @@
 <script>
 import { ref, computed } from 'vue';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'CardGrid',
@@ -31,6 +32,7 @@ export default {
   setup(props) {
     const initialCardCount = 12;
     const cardCount = ref(initialCardCount);
+    const router = useRouter(); // Import the router instance
 
     const visibleCards = computed(() => {
       return props.posts.slice(0, cardCount.value);
@@ -47,10 +49,15 @@ export default {
       return (images && images.length > 0 ? images[0] : 'https://via.placeholder.com/300x200');
     };
 
+    const goToPost = (id) => {
+      router.push(`category/palestine/${id}`);
+    }
+
     return {
       visibleCards,
       getDescription,
-      getImageSrc
+      getImageSrc,
+      goToPost
     };
   }
 };
@@ -92,11 +99,14 @@ export default {
 
 .card-body {
   padding: 15px; /* Padding inside the card */
-  text-align: center; /* Center text inside the card body */
+  background: #eee;
+  text-align: left; /* Center text inside the card body */
+  width: 100%;
 }
 
 .card-title {
   margin-bottom: 0.5rem;
+  text-align: left;
 }
 
 .card-text {

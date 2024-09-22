@@ -5,11 +5,12 @@ NOW
 -Add limits on the profile page to the name and bio ✅
 -Change the create page to confirm by Alt + Enter so text can be broken onto new lines ✅
 -make post creator name clickable to their profile ✅
-
 -Allow images to be made bigger by clicking them ✅
--Allow the routing to the indiv post through home etc and the pfp
--Add a limit to how many posts show on homepage and add a button to show more
+-Allow the routing to the indiv post through home etc and the pfp ✅
+-Add a limit to how many posts show on homepage and add a button to show more ✅
+
 -Add recent posts
+-add a limit on the documents that can be used for the pfp and the banner
 
 UPCOMING
 -add gridFS as a storing option on the create page for anything above 16MB
