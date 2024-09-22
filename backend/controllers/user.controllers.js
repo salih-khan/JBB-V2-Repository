@@ -361,8 +361,26 @@ const getIndividualPost = async (req, res) => {
             return res.status(404).json({ error: 'Post not found' });
         }
 
+        //will also return the users display name and id by using the paramteres nameId as a reference
+        const user = await User.findOne({nameId: post.nameId});
+
+        if (!user) {
+            return res.status(404).json({
+                error: 'Creator of Post not found'
+            });
+        }
+
+        const responseData = {
+            post,
+            user: user ? {
+                displayName: user.displayName,
+                _id: user._id
+            }: null
+        };
+
+
         // Return the post details as a response
-        res.status(200).json(post);
+        res.status(200).json(responseData);
     } catch (error) {
         console.error('Error fetching post:', error);
         res.status(500).json({ error: 'Failed to fetch post', details: error.message });

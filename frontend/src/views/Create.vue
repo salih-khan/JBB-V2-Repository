@@ -1,6 +1,19 @@
 <template>
   <div class="create">
     <Header />
+
+    <div class="guidelines container">
+      <h4>Guidelines to creating a post</h4>
+      <br />
+      <p>
+        <ul>
+          <li>All fields except images <b>must</b> be filled</li>
+          <li>The date input should correspond with the date of the relevant event</li>
+          <li>Videos and images are both acceptable. Files with a large size must have a link to the file instead (in development)</li>
+        </ul>
+      </p>
+    </div>
+
     <div class="entry-form-wrapper">
       <div class="entry-form">
         <div class="column column1">
@@ -12,12 +25,8 @@
               type="text"
               placeholder="Enter title"
               class="title-input mb-3"
-              :disabled="titleConfirmed"
-              @keypress="handleKeyPress($event, 'title')"
-              :class="{'confirmed': titleConfirmed}"
               v-model="postTitleData"
             />
-            <span v-if="titleConfirmed" class="edit-icon" @click="editField('title')">✏️</span>
           </div>
 
           <h3 class="form-main-text">Description</h3>
@@ -25,12 +34,8 @@
             <textarea
               placeholder="Enter description"
               class="description-input"
-              :disabled="descriptionConfirmed"
-              @keypress="handleKeyPress($event, 'description')"
-              :class="{'confirmed': descriptionConfirmed}"
               v-model="postDescriptionData"
             ></textarea>
-            <span v-if="descriptionConfirmed" class="edit-icon" @click="editField('description')">✏️</span>
           </div>
 
           <h3 class="form-main-text">Date Information</h3>
@@ -53,12 +58,8 @@
                 type="text"
                 placeholder="Title"
                 class="proof-title"
-                :disabled="proof.titleConfirmed"
-                @keypress="handleKeyPress($event, 'proofTitle', index)"
-                :class="{'confirmed': proof.titleConfirmed}"
                 v-model="proof.title"
               />
-              <span v-if="proof.titleConfirmed" class="edit-icon" @click="editField('proofTitle', index)">✏️</span>
             </div>
 
             <div class="input-wrapper">
@@ -66,24 +67,16 @@
                 type="text"
                 placeholder="Source (link preferable)"
                 class="proof-title"
-                :disabled="proof.sourceConfirmed"
-                @keypress="handleKeyPress($event, 'proofSource', index)"
-                :class="{'confirmed': proof.sourceConfirmed}"
                 v-model="proof.source"
               />
-              <span v-if="proof.sourceConfirmed" class="edit-icon" @click="editField('proofSource', index)">✏️</span>
             </div>
 
             <div class="input-wrapper">
               <textarea
                 placeholder="Description"
                 class="proof-description"
-                :disabled="proof.descriptionConfirmed"
-                @keypress="handleKeyPress($event, 'proofDescription', index)"
-                :class="{'confirmed': proof.descriptionConfirmed}"
                 v-model="proof.description"
               ></textarea>
-              <span v-if="proof.descriptionConfirmed" class="edit-icon" @click="editField('proofDescription', index)">✏️</span>
             </div>
           </div>
 
@@ -125,7 +118,7 @@
       <div class="container d-flex submit">
         <div class="dark-box">
           <label class="checkbox-container">
-            <input type="checkbox" required />
+            <input type="checkbox" required v-model="isChecked" />
             <span class="checkmark"></span>
             <span class="checkbox-text">I agree to the <button id="TAC" @click="openTACModal">terms and conditions</button></span>
           </label>
@@ -156,9 +149,7 @@ export default {
     const files = ref([]);
     const dateInfo = ref('');
     const addNSFWTag = ref(false);
-
-    const titleConfirmed = ref(false);
-    const descriptionConfirmed = ref(false);
+    const isChecked = ref(false);  // Track checkbox state
 
     const postTitleData = ref('');
     const postDescriptionData = ref('');
@@ -168,9 +159,6 @@ export default {
         title: '',
         source: '',
         description: '',
-        titleConfirmed: false,
-        sourceConfirmed: false,
-        descriptionConfirmed: false
       }
     ]);
 
@@ -203,7 +191,6 @@ export default {
         if (event.key === 'Enter') {
           nextTick(() => {
             if (postTitleData.value.trim() !== '') {
-              titleConfirmed.value = true;
             } else {
               alert('Title cannot be empty.');
             }
@@ -213,7 +200,6 @@ export default {
         if (event.key === 'Enter') {
           nextTick(() => {
             if (postDescriptionData.value.trim() !== '') {
-              descriptionConfirmed.value = true;
             } else {
               alert('Description cannot be empty.');
             }
@@ -224,10 +210,7 @@ export default {
           proofs.value[index] = {
             title: '',
             source: '',
-            description: '',
-            titleConfirmed: false,
-            sourceConfirmed: false,
-            descriptionConfirmed: false
+            description: ''
           };
         }
 
@@ -241,19 +224,16 @@ export default {
 
             if (field === 'proofTitle') {
               if (proof.title.trim() !== '') {
-                proof.titleConfirmed = true;
               } else {
                 alert('Title cannot be empty.');
               }
             } else if (field === 'proofSource') {
               if (proof.source.trim() !== '') {
-                proof.sourceConfirmed = true;
               } else {
                 alert('Source cannot be empty.');
               }
             } else if (field === 'proofDescription') {
               if (proof.description.trim() !== '') {
-                proof.descriptionConfirmed = true;
               } else {
                 alert('Description cannot be empty.');
               }
@@ -267,35 +247,13 @@ export default {
       proofs.value.push({
         title: '',
         source: '',
-        description: '',
-        titleConfirmed: false,
-        sourceConfirmed: false,
-        descriptionConfirmed: false
+        description: ''
       });
     };
 
     const removeLastProof = () => {
       if (proofs.value.length > 1) {
         proofs.value.pop();
-      }
-    };
-
-    const editField = (field, index) => {
-      if (field === 'title') {
-        titleConfirmed.value = false;
-      } else if (field === 'description') {
-        descriptionConfirmed.value = false;
-      } else if (field === 'proofTitle' || field === 'proofSource' || field === 'proofDescription') {
-        if (proofs.value[index]) {
-          const proof = proofs.value[index];
-          if (field === 'proofTitle') {
-            proof.titleConfirmed = false;
-          } else if (field === 'proofSource') {
-            proof.sourceConfirmed = false;
-          } else if (field === 'proofDescription') {
-            proof.descriptionConfirmed = false;
-          }
-        }
       }
     };
 
@@ -310,6 +268,11 @@ export default {
 
 
     const submitPost = async () => {
+      // Validate if checkbox is ticked
+      if (!isChecked.value) {
+        alert('You must agree to the terms and conditions before submitting.');
+        return;  // Stop form submission
+      }
   const formData = new FormData();
 
   // Append text data
@@ -355,8 +318,6 @@ export default {
       files,
       dateInfo,
       addNSFWTag,
-      titleConfirmed,
-      descriptionConfirmed,
       postTitleData,
       postDescriptionData,
       proofs,
@@ -368,10 +329,10 @@ export default {
       handleKeyPress,
       addMoreProofs,
       removeLastProof,
-      editField,
       openTACModal,
       closeTACModal,
-      submitPost
+      submitPost,
+      isChecked
     };
   }
 };
@@ -669,6 +630,56 @@ export default {
   text-decoration: underline;
 }
 
+/* General styling for the guidelines container */
+.guidelines{
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  max-width: 800px;
+  margin: 20px auto;
+  margin-bottom: 0px;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  text-align: left;
+}
+
+/* Title styling */
+.guidelines h4 {
+  font-size: 1.8rem;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 5px;
+}
+
+/* Paragraph styling */
+.guidelines p {
+  margin: 10px 0;
+  line-height: 1.6;
+}
+
+/* UL List styling */
+.guidelines ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin-top: 10px;
+}
+
+.guidelines ul li {
+  margin: 10px 0;
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Bold text inside paragraphs */
+.guidelines b {
+  color: #000;
+  font-weight: 600;
+}
+
 /* Mobile Layout */
 @media (max-width: 768px) {
     .entry-form {
@@ -693,5 +704,16 @@ export default {
     .dark-box {
         padding: 10px;
     }
+  .guidelines.container {
+    padding: 15px;
+  }
+
+  .guidelines h4 {
+    font-size: 1.6rem;
+  }
+
+  .guidelines ul li {
+    font-size: 0.9rem;
+  }
 }
 </style>

@@ -1,15 +1,27 @@
 ToDo list:
 
 NOW
--Add proper discord invite
--Add limits on the profile page to the name and bio 
--Change it so the posts arent loaded every refresh or page change
+-Add proper discord invite ✅
+-Add limits on the profile page to the name and bio ✅
+-Change the create page to confirm by Alt + Enter so text can be broken onto new lines ✅
+-make post creator name clickable to their profile ✅
+
+-add a loading screen
+-Allow images to be made bigger by clicking them
+-Allow the routing to the indiv post through home etc and the pfp
+-Add a limit to how many posts show on homepage and add a button to show more
 
 UPCOMING
 -add gridFS as a storing option on the create page for anything above 16MB
 -There is probably a more efficient system to retrieve the current logged in user rather than getting all of them so please have a look at that and implement it 
+-Settings page
 
 END
 -update temrs and agreements and make privacy policy
 -change the v=if="true" for the create page back to authenticated
 
+To be reviewed
+-Allow video and photo links rather than downloaded imbeds only
+
+Is this a bad thing?
+-Change it so the posts arent loaded every refresh or page change

@@ -2,7 +2,7 @@
   <div class="home">
     <Header />
     <Headline :post="firstItem"/>
-    
+
     <div v-for="(section, index) in newsSections" :key="index">
       <NewsSection :posts="visiblePosts"/>
     </div>
@@ -49,7 +49,7 @@ export default {
             } else {
                 visiblePosts.value = [...visiblePosts.value, ...posts]; // Append new posts to the existing list
             }
-            
+
             if (posts.length < limit) {
                 allPostsLoaded.value = true; // No more posts to load
             }
