@@ -14,7 +14,7 @@
 
         <!-- Post Main Image -->
         <div class="post-image">
-          <img :src="post.images.length > 0 ? post.images[0] : 'https://t4.ftcdn.net/jpg/04/70/29/97/360_F_470299797_UD0eoVMMSUbHCcNJCdv2t8B2g1GVqYgs.jpg'" :alt="post.title" />
+          <img :src="post.images.length > 0 ? post.images[0] : placeholderImage" :alt="post.title" @click="openModal(post.images[0])"/>
         </div>
 
         <!-- Post Description -->
@@ -27,64 +27,72 @@
           <h4>Additional Images</h4>
           <div class="images-gallery">
             <div
-              v-for="(image, index) in post.images.slice(1)" 
-              :key="index" 
-              class="image-item"
+                v-for="(image, index) in post.images.slice(1)"
+                :key="index"
+                class="image-item"
+                @click="openModal(image)"
             >
-              <img :src="image" :alt="'Additional Image ' + (index + 1)" />
-            </div>
-          </div>
-        </div>
-
-        <!-- Proofs Section -->
-        <div class="post-proofs" v-if="post.proofs.length > 0">
-          <h4>Proofs</h4>
-          <div class="proofs-gallery">
-            <div v-for="(proof, index) in post.proofs" :key="index" class="proof-item">
-              <div class="proof-details">
-                <strong>{{ proof.title }}</strong>
-                <br />
-                <a :href="formattedSource(proof.source)" target="_blank">{{ proof.source }}</a>
-                <p>{{ proof.description }}</p>
-              </div>
-            </div>
+            <img :src="image" :alt="'Additional Image ' + (index + 1)" />
           </div>
         </div>
       </div>
 
-      <!-- Recent Posts Section -->
-      <div class="recent-posts">
-        <h4>Recent Posts</h4>
-        <ul>
-          <li v-for="(recentPost, index) in recentPosts" :key="index">
-            <a :href="`/post/${recentPost.id}`">{{ recentPost.title }}</a>
-          </li>
-        </ul>
+      <!-- Proofs Section -->
+      <div class="post-proofs" v-if="post.proofs.length > 0">
+        <h4>Proofs</h4>
+        <div class="proofs-gallery">
+          <div v-for="(proof, index) in post.proofs" :key="index" class="proof-item">
+            <div class="proof-details">
+              <strong>{{ proof.title }}</strong>
+              <br />
+              <a :href="formattedSource(proof.source)" target="_blank">{{ proof.source }}</a>
+              <p>{{ proof.description }}</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <Footer />
+    <!-- Recent Posts Section -->
+    <div class="recent-posts">
+      <h4>Recent Posts</h4>
+      <ul>
+        <li v-for="(recentPost, index) in recentPosts" :key="index">
+          <a :href="`/post/${recentPost.id}`">{{ recentPost.title }}</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Image Modal -->
+  <ImageModal :visible="isModalOpen" :imageSrc="selectedImage" @close="closeModal" />
+
+  <Footer />
   </div>
 </template>
+
 <script>
-import { ref, onMounted } from "vue";
+import {ref, onMounted} from "vue";
 import axios from "axios";
 import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
-import { useRoute } from "vue-router";
+import {useRoute} from "vue-router";
+import ImageModal from "@/components/ImageModal.vue"; // Import the ImageModal component
 
 export default {
-  components: { Header, Footer },
+  components: {Header, Footer, ImageModal},
   setup() {
     const post = ref(null);
     const user = ref(null);
     const recentPosts = ref([]);
     const placeholderImage = "path/to/placeholder.jpg"; // Add your placeholder image URL here
+    const selectedImage = ref(null); // To hold the selected image for modal
+    const isModalOpen = ref(false); // To manage modal visibility
     const route = useRoute();
 
     const fetchPost = async () => {
       try {
-        const { postId } = route.params;
+        const {postId} = route.params;
         const response = await axios.get(`/api/getIndividualPost/${postId}`);
 
         // Axios automatically parses the JSON response
@@ -99,7 +107,7 @@ export default {
     };
 
     const formatDate = (date) => {
-      return new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      return new Date(date).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'});
     };
 
     const formattedSource = (source) => {
@@ -110,15 +118,35 @@ export default {
       return source;
     };
 
+    const openModal = (image) => {
+      selectedImage.value = image; // Set the selected image
+      isModalOpen.value = true; // Open the modal
+    };
+
+    const closeModal = () => {
+      isModalOpen.value = false; // Close the modal
+      selectedImage.value = null; // Reset selected image
+    };
+
     onMounted(() => {
       fetchPost();
     });
 
-    return { post, user, recentPosts, placeholderImage, formatDate, formattedSource };
+    return {
+      post,
+      user,
+      recentPosts,
+      placeholderImage,
+      formatDate,
+      formattedSource,
+      openModal,
+      closeModal,
+      isModalOpen,
+      selectedImage
+    };
   },
 };
 </script>
-
 
 <style scoped>
 .post-wrapper {
@@ -187,7 +215,7 @@ export default {
 /* Proofs Section */
 .post-proofs {
   margin-bottom: 40px;
-  text-align: left
+  text-align: left;
 }
 
 .proofs-gallery {
@@ -200,7 +228,7 @@ export default {
   border: 1px solid #ccc;
   padding: 10px;
   background: #f9f9f9;
-  overflow-wrap: anywhere
+  overflow-wrap: anywhere;
 }
 
 .proof-details {

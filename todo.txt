@@ -6,10 +6,10 @@ NOW
 -Change the create page to confirm by Alt + Enter so text can be broken onto new lines ✅
 -make post creator name clickable to their profile ✅
 
--add a loading screen
--Allow images to be made bigger by clicking them
+-Allow images to be made bigger by clicking them ✅
 -Allow the routing to the indiv post through home etc and the pfp
 -Add a limit to how many posts show on homepage and add a button to show more
+-Add recent posts
 
 UPCOMING
 -add gridFS as a storing option on the create page for anything above 16MB
@@ -22,6 +22,7 @@ END
 
 To be reviewed
 -Allow video and photo links rather than downloaded imbeds only
+-add a loading screen
 
 Is this a bad thing?
 -Change it so the posts arent loaded every refresh or page change
