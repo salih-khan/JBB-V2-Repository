@@ -1,6 +1,6 @@
 ToDo list:
 
-NOW
+NOW -DONE
 -Add proper discord invite ✅
 -Add limits on the profile page to the name and bio ✅
 -Change the create page to confirm by Alt + Enter so text can be broken onto new lines ✅
@@ -8,15 +8,16 @@ NOW
 -Allow images to be made bigger by clicking them ✅
 -Allow the routing to the indiv post through home etc and the pfp ✅
 -Add a limit to how many posts show on homepage and add a button to show more ✅
+-Add recent posts ✅
+-add a limit on the documents that can be used for the pfp and the banner ✅
 
--Add recent posts
--add a limit on the documents that can be used for the pfp and the banner
+------------------------------------------------------------------------------------------------------------------------
 
 UPCOMING
 -add gridFS as a storing option on the create page for anything above 16MB
 -There is probably a more efficient system to retrieve the current logged in user rather than getting all of them so please have a look at that and implement it 
 -Settings page
-
+-Possibly update it so the "user_2390845" is used instead of a long id for the S3 bucket
 END
 -update temrs and agreements and make privacy policy
 -change the v=if="true" for the create page back to authenticated

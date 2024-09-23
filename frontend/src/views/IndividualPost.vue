@@ -14,7 +14,7 @@
 
         <!-- Post Main Image -->
         <div class="post-image">
-          <img :src="post.images.length > 0 ? post.images[0] : placeholderImage" :alt="post.title" @click="openModal(post.images[0])"/>
+          <img :src="post.images.length > 0 ? post.images[0] : placeholderImage" :alt="post.title" @click="openModal(post.images[0])" />
         </div>
 
         <!-- Post Description -->
@@ -32,86 +32,91 @@
                 class="image-item"
                 @click="openModal(image)"
             >
-            <img :src="image" :alt="'Additional Image ' + (index + 1)" />
+              <img :src="image" :alt="'Additional Image ' + (index + 1)" />
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Proofs Section -->
-      <div class="post-proofs" v-if="post.proofs.length > 0">
-        <h4>Proofs</h4>
-        <div class="proofs-gallery">
-          <div v-for="(proof, index) in post.proofs" :key="index" class="proof-item">
-            <div class="proof-details">
-              <strong>{{ proof.title }}</strong>
-              <br />
-              <a :href="formattedSource(proof.source)" target="_blank">{{ proof.source }}</a>
-              <p>{{ proof.description }}</p>
+        <!-- Proofs Section -->
+        <div class="post-proofs" v-if="post.proofs.length > 0">
+          <h4>Proofs</h4>
+          <div class="proofs-gallery">
+            <div v-for="(proof, index) in post.proofs" :key="index" class="proof-item">
+              <div class="proof-details">
+                <strong>{{ proof.title }}</strong>
+                <br />
+                <a :href="formattedSource(proof.source)" target="_blank">{{ proof.source }}</a>
+                <p>{{ proof.description }}</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- Recent Posts Section -->
+      <div class="recent-posts">
+        <h4>Recent Posts</h4>
+        <ul>
+          <li v-for="(recentPost, index) in recentPosts" :key="index" class="recent-post-item">
+            <a :href="`/category/palestine/${recentPost._id}`">{{ recentPost.title }}</a>
+          </li>
+        </ul>
+      </div>
     </div>
+    <!-- Image Modal -->
+    <ImageModal :visible="isModalOpen" :imageSrc="selectedImage" @close="closeModal" />
 
-    <!-- Recent Posts Section -->
-    <div class="recent-posts">
-      <h4>Recent Posts</h4>
-      <ul>
-        <li v-for="(recentPost, index) in recentPosts" :key="index">
-          <a :href="`/post/${recentPost.id}`">{{ recentPost.title }}</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Image Modal -->
-  <ImageModal :visible="isModalOpen" :imageSrc="selectedImage" @close="closeModal" />
-
-  <Footer />
+    <Footer />
   </div>
 </template>
 
 <script>
-import {ref, onMounted} from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
-import {useRoute} from "vue-router";
+import { useRoute } from "vue-router";
 import ImageModal from "@/components/ImageModal.vue"; // Import the ImageModal component
 
 export default {
-  components: {Header, Footer, ImageModal},
+  components: { Header, Footer, ImageModal },
   setup() {
     const post = ref(null);
     const user = ref(null);
-    const recentPosts = ref([]);
+    const recentPosts = ref([]); // Holds the recent posts
     const placeholderImage = "path/to/placeholder.jpg"; // Add your placeholder image URL here
     const selectedImage = ref(null); // To hold the selected image for modal
     const isModalOpen = ref(false); // To manage modal visibility
     const route = useRoute();
 
+    // Fetch an individual post
     const fetchPost = async () => {
       try {
-        const {postId} = route.params;
+        const { postId } = route.params;
         const response = await axios.get(`/api/getIndividualPost/${postId}`);
-
-        // Axios automatically parses the JSON response
-        const responseData = response.data; // Access data directly
+        const responseData = response.data;
         post.value = responseData.post;
         user.value = responseData.user;
-
-        console.log("Frontend: post and user: ", user.value, " ", post.value);
       } catch (error) {
         console.error("Error fetching post:", error);
       }
     };
 
+    // Fetch recent posts
+    const fetchRecentPosts = async () => {
+      try {
+        const response = await axios.get(`/api/getAllPosts?page=1&limit=10`);
+        recentPosts.value = response.data; // Set the fetched posts to the recentPosts array
+      } catch (error) {
+        console.error("Error fetching recent posts:", error);
+      }
+    };
+
     const formatDate = (date) => {
-      return new Date(date).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'});
+      return new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     };
 
     const formattedSource = (source) => {
-      // Ensure the URL starts with 'http://' or 'https://'
       if (!source.startsWith('http://') && !source.startsWith('https://')) {
         return `https://${source}`;
       }
@@ -119,17 +124,18 @@ export default {
     };
 
     const openModal = (image) => {
-      selectedImage.value = image; // Set the selected image
-      isModalOpen.value = true; // Open the modal
+      selectedImage.value = image;
+      isModalOpen.value = true;
     };
 
     const closeModal = () => {
-      isModalOpen.value = false; // Close the modal
-      selectedImage.value = null; // Reset selected image
+      isModalOpen.value = false;
+      selectedImage.value = null;
     };
 
     onMounted(() => {
       fetchPost();
+      fetchRecentPosts(); // Fetch recent posts when the component is mounted
     });
 
     return {
@@ -147,6 +153,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .post-wrapper {
@@ -236,10 +243,12 @@ export default {
 }
 
 /* Recent Posts Section */
+/* Recent Posts Section */
 .recent-posts {
   flex: 1;
   border-left: 1px solid #ddd;
   padding-left: 20px;
+  /* Remove fixed positioning */
 }
 
 .recent-posts h4 {
@@ -254,6 +263,7 @@ export default {
 
 .recent-posts li {
   margin-bottom: 10px;
+  text-align: left;
 }
 
 .recent-posts a {
@@ -264,4 +274,18 @@ export default {
 .recent-posts a:hover {
   text-decoration: underline;
 }
+
+/* Additional modern styles for the Recent Posts */
+.recent-posts li {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #f9f9f9; /* Light background for better visibility */
+  transition: background 0.3s;
+}
+
+.recent-posts li:hover {
+  background: #e0f7fa; /* Change background on hover */
+}
+
 </style>

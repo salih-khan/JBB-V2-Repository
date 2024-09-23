@@ -3,9 +3,9 @@
       <Header />
   
       <div class="main-info container-lg">
-        <div class="banner-image" :style="{ backgroundImage: 'url(' + bannerImage + ')' }"></div>
+        <div class="banner-image" :style="{ backgroundImage: 'url(' + bannerImage + '?t=' + new Date().getTime() + ')' }"></div>
         <div class="row2 d-flex container">
-          <img :src="pfp" alt="pfp" id="pfp">
+          <img :src="pfp + '?t=' + new Date().getTime()" alt="pfp" id="pfp">
           <div class="row2-inner d-flex align-items-center rounded">
             <div>
               <h1 style="color: #333;">{{ displayName }}</h1>
