@@ -6,6 +6,7 @@ import { useAuthValidate } from '../composables/useAuthValidate';
 import Create from '../views/Create.vue'
 import Category from '../views/Category.vue'
 import IndividualPost from '../views/IndividualPost.vue'
+import LoadingTest from '../views/LoadingTest.vue'
 const routes = [
   {
     path: '/',
@@ -40,6 +41,12 @@ const routes = [
     name: 'IndividualPost',
     component: IndividualPost,
     props: true // Pass route params as props to the component
+  }
+  ,
+  {
+    path: '/loading',
+    name: 'Loading',
+    component: LoadingTest,
   }
 ];
 

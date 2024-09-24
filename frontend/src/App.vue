@@ -11,16 +11,10 @@
   color: #2c3e50;
 }
 
-nav {
-  padding: 30px;
-}
-
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
+body {
+  font-family: 'Roboto', sans-serif;
+  font-size: 1rem;
+  line-height: 1.8; /* Increases line spacing globally for better readability */
+  color: #333; /* Softer black for less strain on eyes */
 }
 </style>

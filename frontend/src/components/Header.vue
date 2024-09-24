@@ -123,6 +123,9 @@
   </script>
   
   <style scoped>
+  header{
+    z-index: 10;
+  }
   /* Add any custom styles here if needed */
   /* Sign In Button Styles */
   .sign-in {

@@ -43,7 +43,7 @@
   
           <div v-else class="posts-grid">
             <div v-for="post in posts" :key="post._id" class="post-card">
-              <div class="post-image-container">
+              <div class="post-image-container" @click="goToPost(post._id)">
                 <img :src="post.images && post.images.length > 0 ? post.images[0] : 'https://www.vocaleurope.eu/wp-content/uploads/no-image.jpg'" class="post-image" :alt="post.title" />
                 <div v-if="post.images.length > 1" class="more-images-badge">
                   +{{ post.images.length - 1 }} more
@@ -254,6 +254,7 @@
   background: rgba(0, 0, 0, 0.5);
   padding: 5px;
   border-radius: 10px;
+  margin-top: 10px;
 }
 
 .post-overlay {
@@ -356,125 +357,125 @@
 </style>
 
 <script>
-import {
-    onMounted,
-    ref
-} from 'vue';
-import {
-    useRoute
-} from 'vue-router';
-import {
-    useAuthValidate
-} from '../composables/useAuthValidate';
+import { onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router'; // Import useRouter
+import { useAuthValidate } from '../composables/useAuthValidate';
 import Header from '@/components/Header.vue';
 import Footer from '@/components/Footer.vue';
 import axios from 'axios';
 import updateProfileInfo from '@/components/updateProfileInfo.vue';
 
 export default {
-    name: 'Profile',
-    components: {
-        Header,
-        Footer,
-        updateProfileInfo
-    },
-    setup() {
-        const {
-            isAuthenticated,
-            fetchUser,
-            user
-        } = useAuthValidate();
-        const route = useRoute();
+  name: 'Profile',
+  components: {
+    Header,
+    Footer,
+    updateProfileInfo,
+  },
+  setup() {
+    const { isAuthenticated, fetchUser, user } = useAuthValidate();
+    const route = useRoute();
+    const router = useRouter(); // Initialize router
+    const displayName = ref('');
+    const nameId = ref('');
+    const description = ref('');
+    const bannerImage = ref('');
+    const pfp = ref('');
+    const isCurrentUser = ref(false);
+    const posts = ref([]); // Reactive state for storing the user's posts
 
-        const displayName = ref('');
-        const nameId = ref('');
-        const description = ref('');
-        const bannerImage = ref('');
-        const pfp = ref('');
-        const isCurrentUser = ref(false);
-        const posts = ref([]); // Reactive state for storing the user's posts
+    const showProfileEditorBool = ref(false);
 
-        const showProfileEditorBool = ref(false);
+    const getAccountInfo = async (id) => {
+      try {
+        const response = await axios.get('/api/getAllUsers');
+        const users = response.data;
+        console.log('API Response:', users);
 
-        const getAccountInfo = async (id) => {
-            try {
-                const response = await axios.get('/api/getAllUsers');
-                const users = response.data;
-                console.log('API Response:', users);
+        const currentUser = users.find((user) => user._id === id);
+        if (currentUser) {
+          displayName.value = currentUser.displayName;
+          nameId.value = currentUser.nameId;
+          description.value = currentUser.description;
+          bannerImage.value = currentUser.bannerImage;
+          pfp.value = currentUser.imageUrl;
 
-                const currentUser = users.find(user => user._id === id);
-                if (currentUser) {
-                    displayName.value = currentUser.displayName;
-                    nameId.value = currentUser.nameId;
-                    description.value = currentUser.description;
-                    bannerImage.value = currentUser.bannerImage;
-                    pfp.value = currentUser.imageUrl;
+          isCurrentUser.value =
+              user.value && currentUser._id === user.value._id;
 
-                    // Check if the current profile belongs to the logged-in user
-                    isCurrentUser.value = user.value && currentUser._id === user.value._id;
+          console.log(
+              'Value of displayName and other attributes: ',
+              currentUser
+          );
+          console.log('Is Current User: ', isCurrentUser.value);
 
-                    console.log("Value of displayName and other attributes: ", currentUser);
-                    console.log("Is Current User: ", isCurrentUser.value);
+          const postsResponse = await axios.get(
+              `/api/getAllPostsFromUser`,
+              {
+                params: {
+                  nameId: currentUser.nameId,
+                },
+              }
+          );
 
-                    //getting the posts now
-                    // Get the posts for the current user by their nameId
-                    const postsResponse = await axios.get(`/api/getAllPostsFromUser`, {
-                        params: {
-                            nameId: currentUser.nameId
-                        }
-                    });
-
-                    // Store the fetched posts in the reactive state
-                    posts.value = postsResponse.data;
-                    console.log('User Posts:', posts.value);
-                } else {
-                    console.error('User not found');
-                }
-            } catch (error) {
-                console.error('Error fetching users:', error);
-            }
-        };
-
-        const showProfileEditor = () => {
-            console.log("Being Clicked");
-            showProfileEditorBool.value = true;
+          posts.value = postsResponse.data;
+          console.log('User Posts:', posts.value);
+        } else {
+          console.error('User not found');
         }
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
 
-        const closeProfileEditor = () => {
-            showProfileEditorBool.value = false;
-        }
+    const showProfileEditor = () => {
+      console.log('Being Clicked');
+      showProfileEditorBool.value = true;
+    };
 
-        const handleProfileUpdated = () => {
-            window.location.reload(); // Reload the page
-        }
+    const closeProfileEditor = () => {
+      showProfileEditorBool.value = false;
+    };
 
-        const truncateText = (text, maxLength) => {
-            if (!text) return '';
-            return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
-        };
+    const handleProfileUpdated = () => {
+      window.location.reload(); // Reload the page
+    };
 
-        onMounted(() => {
-            const userId = route.params.id;
-            fetchUser().then(() => {
-                getAccountInfo(userId);
-            });
-        });
+    const truncateText = (text, maxLength) => {
+      if (!text) return '';
+      return text.length > maxLength
+          ? text.slice(0, maxLength) + '...'
+          : text;
+    };
 
-        return {
-            isAuthenticated,
-            displayName,
-            nameId,
-            description,
-            pfp,
-            bannerImage,
-            showProfileEditor,
-            showProfileEditorBool,
-            closeProfileEditor,
-            handleProfileUpdated,
-            isCurrentUser,
-            posts,
-            truncateText
-        };
-    }
+    // Use router to navigate to the post
+    const goToPost = (id) => {
+      router.push(`/category/palestine/${id}`); // Use router for navigation
+    };
+
+    onMounted(() => {
+      const userId = route.params.id;
+      fetchUser().then(() => {
+        getAccountInfo(userId);
+      });
+    });
+
+    return {
+      isAuthenticated,
+      displayName,
+      nameId,
+      description,
+      pfp,
+      bannerImage,
+      showProfileEditor,
+      showProfileEditorBool,
+      closeProfileEditor,
+      handleProfileUpdated,
+      isCurrentUser,
+      posts,
+      truncateText,
+      goToPost, // Ensure goToPost is returned here
+    };
+  },
 };
 </script>

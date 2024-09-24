@@ -8,13 +8,21 @@
         <h1 class="post-title">{{ post.title }}</h1>
 
         <div class="post-meta">
-          <p>By: <a :href="`http://localhost:3000/profiles/${user._id}`" target="_blank">{{ user.displayName }} - {{ post.nameId }}</a></p>
+          <p>
+            By: <a :href="`http://localhost:3000/profiles/${user._id}`" target="_blank">{{ user.displayName }} - {{ post.nameId }}</a>
+          </p>
           <span class="post-date">{{ formatDate(post.date) }}</span>
         </div>
 
-        <!-- Post Main Image -->
-        <div class="post-image">
-          <img :src="post.images.length > 0 ? post.images[0] : placeholderImage" :alt="post.title" @click="openModal(post.images[0])" />
+        <!-- Post Main Media -->
+        <!-- Post Main Media -->
+        <div class="post-media" @click="getMediaType(post.images[0]) === 'image' ? openModal(getMediaSource(post.images[0])) : null">
+          <component
+              :is="getMediaType(post.images[0]) === 'video' ? 'video' : 'img'"
+              :src="getMediaSource(post.images[0])"
+              :alt="post.title"
+              controls="getMediaType(post.images[0]) === 'video'"
+          />
         </div>
 
         <!-- Post Description -->
@@ -22,17 +30,22 @@
           <p v-html="post.description"></p>
         </div>
 
-        <!-- Additional Images Section -->
-        <div class="additional-images" v-if="post.images.length > 1">
-          <h4>Additional Images</h4>
-          <div class="images-gallery">
+        <!-- Additional Media Section -->
+        <div class="additional-media" v-if="post.images.length > 1">
+          <h4>Additional Media</h4>
+          <div class="media-gallery">
             <div
-                v-for="(image, index) in post.images.slice(1)"
+                v-for="(media, index) in post.images.slice(1)"
                 :key="index"
-                class="image-item"
-                @click="openModal(image)"
+                class="media-item"
+                @click="openModal(getMediaSource(media))"
             >
-              <img :src="image" :alt="'Additional Image ' + (index + 1)" />
+              <component
+                  :is="getMediaType(media) === 'video' ? 'video' : 'img'"
+                  :src="getMediaSource(media)"
+                  :alt="'Additional Media ' + (index + 1)"
+                  controls="getMediaType(media) === 'video'"
+              />
             </div>
           </div>
         </div>
@@ -63,6 +76,7 @@
         </ul>
       </div>
     </div>
+
     <!-- Image Modal -->
     <ImageModal :visible="isModalOpen" :imageSrc="selectedImage" @close="closeModal" />
 
@@ -85,7 +99,7 @@ export default {
     const user = ref(null);
     const recentPosts = ref([]); // Holds the recent posts
     const placeholderImage = "path/to/placeholder.jpg"; // Add your placeholder image URL here
-    const selectedImage = ref(null); // To hold the selected image for modal
+    const selectedImage = ref(null); // To hold the selected image/video for modal
     const isModalOpen = ref(false); // To manage modal visibility
     const route = useRoute();
 
@@ -123,14 +137,32 @@ export default {
       return source;
     };
 
-    const openModal = (image) => {
-      selectedImage.value = image;
+    const openModal = (media) => {
+      selectedImage.value = media;
       isModalOpen.value = true;
     };
 
     const closeModal = () => {
       isModalOpen.value = false;
       selectedImage.value = null;
+    };
+
+    // Function to determine media type
+    const getMediaType = (media) => {
+      if (media) {
+        const extension = media.split('.').pop().toLowerCase();
+        if (['mp4', 'webm', 'ogg'].includes(extension)) {
+          return 'video';
+        } else {
+          return 'image';
+        }
+      }
+      return 'image';
+    };
+
+    // Function to get the media source for rendering
+    const getMediaSource = (media) => {
+      return media || placeholderImage;
     };
 
     onMounted(() => {
@@ -148,12 +180,13 @@ export default {
       openModal,
       closeModal,
       isModalOpen,
-      selectedImage
+      selectedImage,
+      getMediaType,
+      getMediaSource,
     };
   },
 };
 </script>
-
 
 <style scoped>
 .post-wrapper {
@@ -183,7 +216,8 @@ export default {
   margin-bottom: 20px;
 }
 
-.post-image img {
+.post-media img,
+.post-media video {
   width: 100%;
   max-height: 400px;
   object-fit: cover;
@@ -192,31 +226,34 @@ export default {
 
 .post-body {
   font-size: 1.1rem;
-  line-height: 1.6;
+  line-height: 1.8; /* Increase line height for readability */
   margin-bottom: 40px;
   text-align: left;
+  letter-spacing: 0.02rem; /* Adds spacing between letters */
+  word-spacing: 0.05rem; /* Adds spacing between words */
+  color: #333; /* Softer color for body text */
 }
 
-/* Additional Images Section */
-.additional-images {
+.additional-media {
   margin-bottom: 40px;
 }
 
-.images-gallery {
+.media-gallery {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 images per row */
+  grid-template-columns: repeat(3, 1fr); /* 3 media items per row */
   gap: 10px;
 }
 
-.image-item {
+.media-item {
   overflow: hidden;
 }
 
-.image-item img {
+.media-item img,
+.media-item video {
   width: 100%;
   height: 100%;
   max-height: 200px;
-  object-fit: cover; /* Ensures the image is not pixelated and maintains aspect ratio */
+  object-fit: cover; /* Ensures the image/video is not pixelated and maintains aspect ratio */
 }
 
 /* Proofs Section */
@@ -243,12 +280,10 @@ export default {
 }
 
 /* Recent Posts Section */
-/* Recent Posts Section */
 .recent-posts {
   flex: 1;
   border-left: 1px solid #ddd;
   padding-left: 20px;
-  /* Remove fixed positioning */
 }
 
 .recent-posts h4 {
@@ -275,17 +310,23 @@ export default {
   text-decoration: underline;
 }
 
-/* Additional modern styles for the Recent Posts */
-.recent-posts li {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background: #f9f9f9; /* Light background for better visibility */
-  transition: background 0.3s;
+/* Modal Styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
-.recent-posts li:hover {
-  background: #e0f7fa; /* Change background on hover */
+.modal img,
+.modal video {
+  max-width: 90%;
+  max-height: 90%;
 }
-
 </style>

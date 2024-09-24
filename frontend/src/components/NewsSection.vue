@@ -110,7 +110,7 @@ export default {
 }
 
 .card-text {
-  height: 4.5em; /* Fixed height for description */
+  height: 5em; /* Fixed height for description */
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;

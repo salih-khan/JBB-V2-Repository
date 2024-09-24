@@ -27,10 +27,12 @@ const startServer = async () => {
         directives: {
           defaultSrc: ["'self'"],
           imgSrc: ["'self'", "data:", "blob:", "*"],
+          mediaSrc: ["'self'", "*"], // Allow video sources
           connectSrc: ["'self'", "https://accounts.google.com"]
         }
       }
     }));
+
 
     app.use(session({
       secret: process.env.SESSION_SECRET,

@@ -2,6 +2,7 @@
   <div class="create">
     <Header />
 
+    <div class="create-inner">
     <div class="guidelines container">
       <h4>Guidelines to creating a post</h4>
       <br />
@@ -13,6 +14,8 @@
         </ul>
       </p>
     </div>
+
+    <LoadingSpinner v-if="isLoading" />
 
     <div class="entry-form-wrapper">
       <div class="entry-form">
@@ -128,6 +131,8 @@
     </div>
 
     <TermsAndConditions v-if="showTermsAndConditions" @close="closeTACModal"/>
+
+    </div>
   </div>
 </template>
 
@@ -136,13 +141,18 @@ import TermsAndConditions from '../components/termsAndConditions.vue';
 import { ref, onMounted, nextTick } from 'vue';
 import { useAuthValidate } from '../composables/useAuthValidate';
 import Header from '@/components/Header.vue';
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
 export default {
   components: {
     Header,
-    TermsAndConditions
+    TermsAndConditions,
+    LoadingSpinner
   },
   setup() {
+    //for the spinner
+    const isLoading = ref(false);
+
     const showTermsAndConditions = ref(false);
 
     const { isAuthenticated, fetchUser } = useAuthValidate();
@@ -169,14 +179,21 @@ export default {
         'video/mp4', 'video/ogg', 'video/webm', 'video/quicktime',
         'video/x-msvideo', 'video/x-matroska'
       ];
+      const maxSize = 30 * 1024 * 1024; // 30 MB
+
       for (let file of event.target.files) {
         if (allowedTypes.includes(file.type)) {
-          files.value.push(file);
+          if (file.size <= maxSize) {
+            files.value.push(file);
+          } else {
+            alert(`File ${file.name} exceeds the maximum size of 16 MB.`);
+          }
         } else {
           alert(`File type ${file.type} is not allowed.`);
         }
       }
     };
+
 
     const removeFile = (index) => {
       files.value.splice(index, 1);
@@ -268,50 +285,55 @@ export default {
 
 
     const submitPost = async () => {
-      // Validate if checkbox is ticked
       if (!isChecked.value) {
         alert('You must agree to the terms and conditions before submitting.');
-        return;  // Stop form submission
+        return;
       }
-  const formData = new FormData();
 
-  // Append text data
-  formData.append('title', postTitleData.value);
-  formData.append('description', postDescriptionData.value);
-  formData.append('date', dateInfo.value);
+      // Validate proof entries
+      for (const proof of proofs.value) {
+        if (!proof.title || !proof.source || !proof.description) {
+          alert('All proof fields must be filled.');
+          return;
+        }
+      }
 
-  // Append proofs data
-  proofs.value.forEach((proof, index) => {
-    formData.append(`proofs[${index}][title]`, proof.title);
-    formData.append(`proofs[${index}][source]`, proof.source);
-    formData.append(`proofs[${index}][description]`, proof.description);
-  });
+      isLoading.value = true; // Set loading to true before submission
 
-  // Append files
-  files.value.forEach((file) => {
-    formData.append('images', file);
-  });
+      const formData = new FormData();
+      formData.append('title', postTitleData.value);
+      formData.append('description', postDescriptionData.value);
+      formData.append('date', dateInfo.value);
 
-  // Append NSFW flag
-  formData.append('nsfw', addNSFWTag.value);
+      proofs.value.forEach((proof, index) => {
+        formData.append(`proofs[${index}][title]`, proof.title);
+        formData.append(`proofs[${index}][source]`, proof.source);
+        formData.append(`proofs[${index}][description]`, proof.description);
+      });
 
-  try {
-    const response = await fetch('/api/newPost', {
-      method: 'POST',
-      body: formData,
-    });
+      files.value.forEach((file) => {
+        formData.append('images', file);
+      });
 
-    if (response.ok) {
-      alert('Post submitted successfully!');
+      formData.append('nsfw', addNSFWTag.value);
 
-      window.location = '/';
-    } else {
-      alert('Failed to submit post');
-    }
-  } catch (error) {
-    console.error('Error submitting the post:', error);
-  }
-};
+      try {
+        const response = await fetch('/api/newPost', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (response.ok) {
+          isLoading.value = false; // Ensure loading is false after submission
+          alert('Post submitted successfully!');
+          window.location = '/';
+        } else {
+          alert('Failed to submit post');
+        }
+      } catch (error) {
+        console.error('Error submitting the post:', error);
+      }
+    };
 
     return {
       showTermsAndConditions,
@@ -332,7 +354,8 @@ export default {
       openTACModal,
       closeTACModal,
       submitPost,
-      isChecked
+      isChecked,
+      isLoading
     };
   }
 };

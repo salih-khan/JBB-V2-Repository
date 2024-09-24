@@ -12,7 +12,7 @@ NOW -DONE
 -add a limit on the documents that can be used for the pfp and the banner ✅
 
 ------------------------------------------------------------------------------------------------------------------------
-
+********* Timeline feature to be implemented and developed 
 UPCOMING
 -add gridFS as a storing option on the create page for anything above 16MB
 -There is probably a more efficient system to retrieve the current logged in user rather than getting all of them so please have a look at that and implement it 
