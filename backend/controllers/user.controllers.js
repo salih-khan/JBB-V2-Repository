@@ -298,9 +298,9 @@ const getAllPosts = async (req, res) => {
                 $lte: endOfMonth
             }
         })
-        .sort({ date: -1 })
-        .skip((page - 1) * limit) // Pagination: Skip the previous pages
-        .limit(parseInt(limit));
+            .sort({ date: -1 })
+            .skip((page - 1) * limit) // Pagination: Skip the previous pages
+            .limit(parseInt(limit));
 
         // If no recent posts or fewer than limit, fetch older posts
         if (posts.length < limit) {
@@ -310,8 +310,8 @@ const getAllPosts = async (req, res) => {
                     $lt: startOfMonth
                 }
             })
-            .sort({ date: -1 })
-            .limit(remainingLimit);
+                .sort({ date: -1 })
+                .limit(remainingLimit);
             posts = [...posts, ...olderPosts]; // Combine recent and older posts
         }
 
@@ -322,6 +322,7 @@ const getAllPosts = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch posts' });
     }
 };
+
 
 //this is refering to the Palestine buttong that takes you to 
 // '/category/palestine'

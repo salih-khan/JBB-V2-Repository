@@ -4,36 +4,48 @@
 
     <div class="category-inner">
       <div class="timeline container">
-        <!-- Timeline or additional content can go here -->
+        <Timeline v-if="posts.length > 0" :posts="posts"/>
       </div>
 
       <div class="posts-section container">
         <h3 class="mb-4" style="text-align: left;">All Posts</h3>
 
-        <!-- Display when there are no posts -->
         <div v-if="posts.length === 0" class="text-center text-muted">
           There are no posts available at the moment.
         </div>
 
-        <!-- Posts Grid Section -->
         <div v-else class="posts-grid">
-          <router-link 
-            v-for="post in posts" 
-            :key="post._id" 
-            :to="`/category/palestine/${post._id}`"
-            class="post-link"
+          <router-link
+              v-for="post in posts"
+              :key="post._id"
+              :to="`/category/palestine/${post._id}`"
+              class="post-link"
           >
             <div class="post-card">
               <div class="post-image-container">
-                <img :src="post.images && post.images.length > 0 ? post.images[0] : 'https://www.vocaleurope.eu/wp-content/uploads/no-image.jpg'" class="post-image" :alt="post.title" />
+                <template v-if="isVideo(post.images)">
+                  <video
+                      :src="getMediaSrc(post.images)"
+                      class="post-image"
+                      poster="https://via.placeholder.com/300x200"
+                      autoplay
+                      muted
+                      playsinline
+                      disablePictureInPicture
+                      controlsList="nodownload noplaybackrate nofullscreen"
+                  ></video>
+                </template>
+                <template v-else>
+                  <img :src="getMediaSrc(post.images)" class="post-image" :alt="post.title" />
+                </template>
                 <div v-if="post.images.length > 1" class="more-images-badge">
                   +{{ post.images.length - 1 }} more
                 </div>
-                <div class="post-overlay">
-                  <h5 class="post-title-default">{{ post.title }}</h5>
-                  <p class="post-description">{{ truncateText(post.description, 100) }}</p>
-                </div>
                 <p class="post-proofs">{{ post.proofs.length }} proofs</p>
+              </div>
+              <div class="post-details">
+                <h5 class="post-title-default">{{ truncateText(post.title, 50) }}</h5>
+                <p class="post-description">{{ truncateText(post.description, 200) }}</p>
               </div>
             </div>
           </router-link>
@@ -49,12 +61,14 @@
 import axios from 'axios';
 import Header from '../components/Header.vue';
 import Footer from '../components/Footer.vue';
+import Timeline from '../components/Timeline.vue'
 import { ref, onMounted } from 'vue';
 
 export default {
   components: {
     Header,
-    Footer
+    Footer,
+    Timeline
   },
   setup() {
     const posts = ref([]);
@@ -73,15 +87,30 @@ export default {
       return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
     };
 
+    const getMediaSrc = (media) => {
+      return media && media.length > 0 ? media[0] : 'https://www.vocaleurope.eu/wp-content/uploads/no-image.jpg';
+    };
+
+    const isVideo = (media) => {
+      if (media && media.length > 0) {
+        const videoFormats = ['mp4', 'webm', 'ogg'];
+        const fileExtension = media[0].split('.').pop().toLowerCase();
+        return videoFormats.includes(fileExtension);
+      }
+      return false;
+    };
+
     onMounted(() => {
-      fetchPosts(); // Fetch posts on component mount
+      fetchPosts();
     });
 
     return {
       posts,
       truncateText,
+      getMediaSrc,
+      isVideo,
     };
-  }
+  },
 };
 </script>
 
@@ -89,10 +118,8 @@ export default {
 .category-inner {
   min-height: 100vh;
 }
-
-.timeline {
-  height: 300px;
-  background-color: #333;
+.container{
+  padding: 0px;
 }
 
 /* Grid Layout for Posts */
@@ -102,21 +129,24 @@ export default {
   gap: 1rem;
 }
 
-/* Hover effect on post card */
 .post-card {
   position: relative;
   overflow: hidden;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   background: #fff;
-  transition: border 0.3s ease; /* Transition for border */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 350px; /* Fixed height for uniformity */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .post-card:hover {
-  border: 3px solid #007bff; /* Blue border on hover */
+  transform: translateY(-10px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Link Styles */
 .post-link {
   text-decoration: none;
   color: inherit;
@@ -124,14 +154,13 @@ export default {
 
 .post-image-container {
   position: relative;
-  height: 200px;
+  height: 180px; /* Fixed height for the image/video container */
 }
 
 .post-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
 }
 
 .more-images-badge {
@@ -156,47 +185,38 @@ export default {
   font-size: 0.8rem;
 }
 
-.post-title-default {
-  font-size: 1.25rem;
-  color: #eee;
-  text-align: center;
-  opacity: 1;
-  transition: opacity 0.3s ease;
-  z-index: 5;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 10px;
+.post-details {
   padding: 10px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  /* Removed justify-content: space-between */
+  height: 150px; /* Fixed height for the details section */
+  gap: 0.5rem; /* Add some space between title and description */
+}
+
+.post-title-default {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 0.2rem; /* Reduced margin for a tighter layout */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .post-description {
-  font-size: 1rem;
-  color: #fff;
-  text-align: justify;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: 2;
-  background: rgba(0, 0, 0, 0.5);
-  padding: 5px;
-  border-radius: 10px;
+  font-size: 0.9rem;
+  color: #666;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Show up to 3 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0; /* Remove default margins for tighter alignment */
 }
 
-.post-card:hover .post-title-default {
-  opacity: 0;
-}
-
+.post-card:hover .post-title-default,
 .post-card:hover .post-description {
   opacity: 1;
-}
-
-/* Pagination Styles */
-.pagination-controls {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.pagination-controls button {
-  margin: 0 10px;
 }
 </style>

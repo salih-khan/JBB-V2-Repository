@@ -3,11 +3,25 @@
     <div class="row g-4">
       <div class="col-md-4" v-for="(card, index) in visibleCards" :key="index">
         <div class="card border-0 d-flex flex-column align-items-center" @click="goToPost(card._id)">
-          <div class="img-container">
-            <img :src="getImageSrc(card.images)" class="card-img" alt="Card image" />
+          <div class="media-container">
+            <template v-if="isVideo(card.images)">
+              <video
+                  :src="getMediaSrc(card.images)"
+                  class="card-video"
+                  poster="https://via.placeholder.com/300x200"
+                  autoplay
+                  muted
+                  playsinline
+                  disablePictureInPicture
+                  controlsList="nodownload noplaybackrate nofullscreen">
+              </video>
+            </template>
+            <template v-else>
+              <img :src="getMediaSrc(card.images)" class="card-img" alt="Card image" />
+            </template>
           </div>
           <div class="card-body text-center">
-            <h5 class="card-title">{{ card.title ?? 'Default Title' }}</h5>
+            <h5 class="card-title">{{ getTruncatedTitle(card.title ?? 'Default Title') }}</h5>
             <p class="card-text">{{ getDescription(card.description ?? 'Default Description') }}</p>
           </div>
         </div>
@@ -18,7 +32,6 @@
 
 <script>
 import { ref, computed } from 'vue';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { useRouter } from 'vue-router';
 
 export default {
@@ -30,12 +43,10 @@ export default {
     }
   },
   setup(props) {
-    const initialCardCount = 12;
-    const cardCount = ref(initialCardCount);
-    const router = useRouter(); // Import the router instance
+    const router = useRouter();
 
     const visibleCards = computed(() => {
-      return props.posts.slice(0, cardCount.value);
+      return props.posts; // All posts are visible (Pagination handled in Home)
     });
 
     const getDescription = (description) => {
@@ -43,10 +54,22 @@ export default {
       return description.length > maxLength ? description.substring(0, maxLength) + '...' : description;
     };
 
+    const getTruncatedTitle = (title) => {
+      const maxTitleLength = 50; // Maximum characters for the title
+      return title.length > maxTitleLength ? title.substring(0, maxTitleLength) + '...' : title;
+    };
 
+    const getMediaSrc = (media) => {
+      return (media && media.length > 0 ? media[0] : 'https://via.placeholder.com/300x200');
+    };
 
-    const getImageSrc = (images) => {
-      return (images && images.length > 0 ? images[0] : 'https://via.placeholder.com/300x200');
+    const isVideo = (media) => {
+      if (media && media.length > 0) {
+        const videoFormats = ['mp4', 'webm', 'ogg'];
+        const fileExtension = media[0].split('.').pop().toLowerCase();
+        return videoFormats.includes(fileExtension);
+      }
+      return false;
     };
 
     const goToPost = (id) => {
@@ -56,7 +79,9 @@ export default {
     return {
       visibleCards,
       getDescription,
-      getImageSrc,
+      getTruncatedTitle,
+      getMediaSrc,
+      isVideo,
       goToPost
     };
   }
@@ -81,20 +106,20 @@ export default {
   justify-content: center; /* Center content vertically if needed */
 }
 
-.img-container {
+.media-container {
   width: 100%;
-  height: 200px; /* Fixed height for the image container */
+  height: 200px; /* Fixed height for the media container */
   overflow: hidden;
   display: flex;
-  align-items: center; /* Center image vertically */
-  justify-content: center; /* Center image horizontally */
+  align-items: center; /* Center media vertically */
+  justify-content: center; /* Center media horizontally */
 }
 
-.card-img {
+.card-img, .card-video {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Ensures images fit well */
-  border-radius: 0; /* No border-radius for images */
+  object-fit: cover; /* Ensures media fits well */
+  border-radius: 0; /* No border-radius for images or videos */
 }
 
 .card-body {

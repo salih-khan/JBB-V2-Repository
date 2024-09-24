@@ -5,17 +5,31 @@
       <div class="col-12 d-flex align-items-stretch" @click="post ? goToPost(post._id) : null">
         <div class="card w-100 d-flex flex-column flex-md-row">
           <div class="col-md-6 d-flex justify-content-center align-items-center p-0">
-            <img :src="post?.images?.[0] ?? 'https://www.vocaleurope.eu/wp-content/uploads/no-image.jpg'" :class="imgClass" alt="Main headline" style="object-fit: cover;" >
+            <template v-if="isVideo(post?.images)">
+              <video
+                  :src="getMediaSrc(post?.images)"
+                  class="video-fluid medium-video"
+                  poster="https://www.vocaleurope.eu/wp-content/uploads/no-image.jpg"
+                  autoplay
+                  muted
+                  playsinline
+                  disablePictureInPicture
+                  controlsList="nodownload noplaybackrate nofullscreen">
+              </video>
+            </template>
+            <template v-else>
+              <img :src="getMediaSrc(post?.images)" :class="imgClass" alt="Main headline" style="object-fit: cover;">
+            </template>
           </div>
           <div class="col-md-6 d-flex flex-column justify-content-start p-3">
             <h5 class="card-title">{{ post?.title ?? 'Default Title' }}</h5>
             <div class="d-flex mb-2">
               <!-- Display number of proofs -->
-              <button class=" icons">
+              <button class="icons">
                 {{ post?.proofs?.length ?? 0 }} Proof{{ (post?.proofs?.length ?? 0) > 1 ? 's' : '' }}
               </button>
               <!-- Display number of images -->
-              <button class=" icons">
+              <button class="icons">
                 +{{ post?.images?.length ?? 0 }} Image{{ (post?.images?.length ?? 0) > 1 ? 's' : '' }}
               </button>
             </div>
@@ -31,7 +45,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ref, computed } from 'vue';
 import discordInvite from '../components/discordInvite.vue';
-import {useRouter} from 'vue-router';
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'NewsCard',
@@ -47,12 +61,13 @@ export default {
 
   setup(props) {
     const router = useRouter();
+
     // Truncated description with optional chaining and nullish coalescing
     const truncatedDescription = computed(() => {
       const description = props.post?.description ?? 'Default Description';
-      return description.length > 150 
-        ? description.substring(0, 150) + '...' 
-        : description;
+      return description.length > 150
+          ? description.substring(0, 150) + '...'
+          : description;
     });
 
     // Image class based on screen size
@@ -60,12 +75,30 @@ export default {
       return window.innerWidth <= 574 ? 'img-fluid medium-img' : 'img-fluid medium-img';
     });
 
+    // Get media (image or video) source
+    const getMediaSrc = (media) => {
+      return (media && media.length > 0 ? media[0] : 'https://www.vocaleurope.eu/wp-content/uploads/no-image.jpg');
+    };
+
+    // Check if the media file is a video based on the file extension
+    const isVideo = (media) => {
+      if (media && media.length > 0) {
+        const videoFormats = ['mp4', 'webm', 'ogg'];
+        const fileExtension = media[0].split('.').pop().toLowerCase();
+        return videoFormats.includes(fileExtension);
+      }
+      return false;
+    };
+
     const goToPost = (id) => {
       router.push(`category/palestine/${id}`);
     }
+
     return {
       truncatedDescription,
       imgClass,
+      getMediaSrc,
+      isVideo,
       goToPost
     };
   }
@@ -80,17 +113,12 @@ export default {
   margin: 2rem;
 }
 
-.img-fluid {
+.img-fluid, .video-fluid {
   margin: auto;
   border-radius: 4px;
 }
 
-.small-img {
-  width: 150px;
-  height: 150px;
-}
-
-.medium-img {
+.medium-img, .medium-video {
   width: 100%;
   max-height: 300px;
 }

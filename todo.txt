@@ -10,21 +10,24 @@ NOW -DONE
 -Add a limit to how many posts show on homepage and add a button to show more ✅
 -Add recent posts ✅
 -add a limit on the documents that can be used for the pfp and the banner ✅
+-add a loading screen ✅
+
+-Settings page
 
 ------------------------------------------------------------------------------------------------------------------------
-********* Timeline feature to be implemented and developed 
+********* Timeline feature to be implemented and developed
+
 UPCOMING
 -add gridFS as a storing option on the create page for anything above 16MB
 -There is probably a more efficient system to retrieve the current logged in user rather than getting all of them so please have a look at that and implement it 
--Settings page
 -Possibly update it so the "user_2390845" is used instead of a long id for the S3 bucket
+-Have a reload since going back after logging out takes images and info from cache
+
 END
 -update temrs and agreements and make privacy policy
--change the v=if="true" for the create page back to authenticated
 
 To be reviewed
 -Allow video and photo links rather than downloaded imbeds only
--add a loading screen
 
 Is this a bad thing?
 -Change it so the posts arent loaded every refresh or page change

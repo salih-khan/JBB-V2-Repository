@@ -1,5 +1,5 @@
 <template>
-  <div class="create">
+  <div class="create" v-if="isAuthenticated">
     <Header />
 
     <div class="create-inner">
@@ -335,6 +335,8 @@ export default {
       }
     };
 
+
+
     return {
       showTermsAndConditions,
       files,
@@ -355,7 +357,8 @@ export default {
       closeTACModal,
       submitPost,
       isChecked,
-      isLoading
+      isLoading,
+      isAuthenticated
     };
   }
 };
