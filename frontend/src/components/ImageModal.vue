@@ -44,7 +44,7 @@ export default {
   justify-content: center;
   align-items: center;
   border-radius: 10px; /* Optional: rounded corners */
-  background: rgba(255, 255, 255, 0.5); /* Slightly transparent white background */
+  background: rgba(255, 255, 255, 0); /* Slightly transparent white background */
   padding: 10px; /* Padding around the image */
 }
 

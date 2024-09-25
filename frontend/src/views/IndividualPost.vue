@@ -189,6 +189,9 @@ export default {
 </script>
 
 <style scoped>
+.container-fluid, .container{
+  padding: 0px;
+}
 .post-wrapper {
   display: flex;
   max-width: 1200px;
@@ -328,5 +331,19 @@ export default {
 .modal video {
   max-width: 90%;
   max-height: 90%;
+}
+
+@media (max-width: 768px) {
+  .post-wrapper{
+    display: block;
+  }
+  .post-content{
+    margin: auto;
+  }
+  .recent-posts{
+    display: flex;
+    flex-direction: column;
+  }
+  .media-gallery{ grid-template-columns: repeat(1,1fr); }
 }
 </style>

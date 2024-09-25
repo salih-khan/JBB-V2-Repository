@@ -8,7 +8,7 @@
       </div>
 
       <div class="posts-section container">
-        <h3 class="mb-4" style="text-align: left;">All Posts</h3>
+        <h3 class="mb-4 all-posts" style="text-align: left;">All Posts</h3>
 
         <div v-if="posts.length === 0" class="text-center text-muted">
           There are no posts available at the moment.
@@ -121,7 +121,9 @@ export default {
 .container{
   padding: 0px;
 }
-
+.container-fluid{
+  padding: 0px;
+}
 /* Grid Layout for Posts */
 .posts-grid {
   display: grid;
@@ -185,6 +187,9 @@ export default {
   font-size: 0.8rem;
 }
 
+.all-posts{
+  margin-left: 1rem;
+}
 .post-details {
   padding: 10px;
   text-align: left;
@@ -218,5 +223,15 @@ export default {
 .post-card:hover .post-title-default,
 .post-card:hover .post-description {
   opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .posts-grid{
+    gap: 0.25rem;
+  }
+
+  .post-link{
+    margin: 10px;
+  }
 }
 </style>

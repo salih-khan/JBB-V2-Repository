@@ -133,6 +133,8 @@
     <TermsAndConditions v-if="showTermsAndConditions" @close="closeTACModal"/>
 
     </div>
+
+    <Footer/>
   </div>
 </template>
 
@@ -141,13 +143,16 @@ import TermsAndConditions from '../components/termsAndConditions.vue';
 import { ref, onMounted, nextTick } from 'vue';
 import { useAuthValidate } from '../composables/useAuthValidate';
 import Header from '@/components/Header.vue';
+import Footer from '@/components/Footer.vue';
+
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
 export default {
   components: {
     Header,
     TermsAndConditions,
-    LoadingSpinner
+    LoadingSpinner,
+    Footer
   },
   setup() {
     //for the spinner
@@ -335,7 +340,9 @@ export default {
       }
     };
 
-
+    onMounted(async () => {
+      await fetchUser(); // Call to fetch user data
+    });
 
     return {
       showTermsAndConditions,

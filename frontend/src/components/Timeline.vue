@@ -67,8 +67,11 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
 .timeline {
   display: flex;
+  margin-top: 20px;
+  margin-bottom: 20px;
   overflow-x: auto; /* Allow horizontal scrolling */
   padding: 20px;
   border: 1px solid #ccc; /* Optional border for styling */

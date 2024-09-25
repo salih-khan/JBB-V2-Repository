@@ -7,6 +7,8 @@ import Create from '../views/Create.vue'
 import Category from '../views/Category.vue'
 import IndividualPost from '../views/IndividualPost.vue'
 import LoadingTest from '../views/LoadingTest.vue'
+import DevLog from '../views/DevLog.vue'
+
 const routes = [
   {
     path: '/',
@@ -47,6 +49,12 @@ const routes = [
     path: '/loading',
     name: 'Loading',
     component: LoadingTest,
+  }
+  ,
+  {
+    path: '/development',
+    name: 'Development',
+    component: DevLog,
   }
 ];
 

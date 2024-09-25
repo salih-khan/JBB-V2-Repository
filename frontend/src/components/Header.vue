@@ -1,8 +1,8 @@
 <template>
   <header>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light ">
       <div class="container">
-        <router-link class="navbar-brand fw-bold display-6" to="/">JBB</router-link>
+        <router-link class="navbar-brand fw-bold display-6 jbb" to="/">JBB</router-link>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -11,9 +11,12 @@
             <li class="nav-item">
               <router-link class="nav-link" to="/profiles">Profiles</router-link>
             </li>
+            <li class="nav-item">
+              <router-link class="nav-link" to="/development">Dev Log</router-link>
+            </li>
           </ul>
           <div class="d-none d-lg-flex align-items-center">
-            <router-link v-if="isAuthenticated" to="/create" class="btn btn-primary rounded-pill me-2 create-btn">Create</router-link>
+            <router-link v-if="isAuthenticated" to="/create" class="btn create rounded-pill me-2 create-btn">Create</router-link>
             <a id="login" v-if="!isAuthenticated" @click="signIn" class="sign-in m-1">Sign In</a>
             <div v-if="isAuthenticated" class="dropdown d-inline-block">
               <a 
@@ -64,7 +67,7 @@
         </div>
       </div>
     </nav>
-    <div class="container-fluid container-items p-2 bg-light">
+    <div class="container-fluid container-items p-2 line2">
       <div class="container justify-content-start d-flex">
         <router-link class="btn btn-pink rounded-pill" :to="{ path: '/category/' + 'palestine' }" >Palestine</router-link>
       </div>
@@ -126,6 +129,11 @@
   header{
     z-index: 10;
   }
+
+  .navbar, .line2{
+    background: #212529  !important;
+
+  }
   /* Add any custom styles here if needed */
   /* Sign In Button Styles */
   .sign-in {
@@ -136,13 +144,15 @@
     text-align: center;
     text-decoration: none;
     color: #ffffff;
-    background-color: #333333;
+    background-color: #dc3545;
     border: none;
     border-radius: 25px;
     transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
     cursor: pointer;
   }
-  
+  .jbb{
+    color: rgb(255,255,255);
+  }
   .sign-in:hover {
     background-color: #555555;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -166,7 +176,11 @@
   .header-title:hover{
     cursor: pointer;
   }
-  
+
+  .create{
+    background-color: #dc3545 !important;
+    color: white;
+  }
   .btn-pink {
     padding: 10px 20px;
     font-size: 16px;
@@ -182,7 +196,13 @@
     background-color: #ff856c; /* Slightly lighter pink on hover */
     transform: scale(1.05); /* Slightly increase size on hover */
   }
-  
+  .navbar-toggler {
+    border-color: rgba(255, 255, 255, 1); /* Optional: Change the border color of the button to white */
+  }
+  .navbar-toggler-icon {
+    background-image: url('data:image/svg+xml;charset=utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"%3E%3Cpath stroke="rgba(255, 255, 255, 1)" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" d="M4 7h22M4 15h22M4 23h22"/%3E%3C/svg%3E');
+  }
+
   .dropdown-menu {
     min-width: 200px;
   }
@@ -201,6 +221,10 @@
   
   .me-3 {
     margin-right: 1rem !important;
+  }
+
+  .nav-link{
+    color: white;
   }
   
   /* Logout Button Styles */

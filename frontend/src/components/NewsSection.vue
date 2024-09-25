@@ -119,12 +119,11 @@ export default {
   width: 100%;
   height: 100%;
   object-fit: cover; /* Ensures media fits well */
-  border-radius: 0; /* No border-radius for images or videos */
+  border-radius: 10px; /* No border-radius for images or videos */
 }
 
 .card-body {
   padding: 15px; /* Padding inside the card */
-  background: #eee;
   text-align: left; /* Center text inside the card body */
   width: 100%;
 }

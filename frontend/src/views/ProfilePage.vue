@@ -61,6 +61,8 @@
   
       <!-- Update Profile Info Modal -->
       <updateProfileInfo v-if="showProfileEditorBool && isAuthenticated && isCurrentUser" @close="closeProfileEditor" @profileUpdated="handleProfileUpdated" />
+
+      <Footer />
     </div>
   </template>
 
