@@ -28,6 +28,17 @@ const startServer = async () => {
     app.use(cors(corsOptions));
     app.use(helmet());
 
+    // Content Security Policy
+    app.use(helmet.contentSecurityPolicy({
+      directives: {
+        defaultSrc: ["'self'", 'https://jbb-backend-webservice.onrender.com'],
+        imgSrc: ["'self'", 'data:', 'https://*'],
+        connectSrc: ["'self'", 'https://jbb-backend-webservice.onrender.com'],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://*'],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://*'],
+      },
+    }));
+
     app.use(session({
       secret: process.env.SESSION_SECRET,
       resave: true,
