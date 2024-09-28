@@ -57,7 +57,7 @@ const routes = [
     component: DevLog,
   },
   {
-    path: '*', // Catch-all route
+    path: '/:pathMatch(.*)*', // Catch-all route
     redirect: '/' // Redirect all unknown routes to the home page
   }
 
