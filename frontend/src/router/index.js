@@ -56,10 +56,6 @@ const routes = [
     name: 'Development',
     component: DevLog,
   },
-  {
-    path: '*', // Catch-all route
-    component: HomeView
-  }
 
 ];
 
