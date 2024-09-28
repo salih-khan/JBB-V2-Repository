@@ -88,14 +88,18 @@ const startServer = async () => {
 
     // Proxy all other requests to the frontend
     app.use('/*', createProxyMiddleware({
-      origin: ['https://jbb-frontend.onrender.com', 'https://jbb-backend-webservice.onrender.com'],
-      changeOrigin: true,
-      secure: false,
+      target: 'https://jbb-frontend.onrender.com', // Target your frontend
+      changeOrigin: true, // Changes the origin of the host header to the target URL
+      secure: false, // If your target is an HTTPS server, keep this true
+      pathRewrite: {
+        '^/api': '', // Optional: If you want to remove '/api' prefix in the request
+        '^/': '/', // Keeps the same URL path
+      },
       onProxyRes: (proxyRes, req, res) => {
         proxyRes.headers['X-Proxy-By'] = 'Backend Proxy'; // Add custom headers if needed
       },
-      pathRewrite: (path, req) => path, // Keeps the same URL path
     }));
+
 
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
