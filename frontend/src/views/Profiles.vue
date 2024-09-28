@@ -33,7 +33,7 @@ export default {
 
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('https://jbb-backend-webservice.onrender.com/api/getAllUsers');
+        const response = await axios.get('https://jbb-fullstack.onrender.com/api/getAllUsers');
         console.log('API Response:', response.data);
         users.value = response.data;
       } catch (error) {

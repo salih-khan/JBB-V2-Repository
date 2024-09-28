@@ -107,7 +107,7 @@ export default {
     const fetchPost = async () => {
       try {
         const { postId } = route.params;
-        const response = await axios.get(`https://jbb-backend-webservice.onrender.com/api/getIndividualPost/${postId}`);
+        const response = await axios.get(`https://jbb-fullstack.onrender.com/api/getIndividualPost/${postId}`);
         const responseData = response.data;
         post.value = responseData.post;
         user.value = responseData.user;
@@ -119,7 +119,7 @@ export default {
     // Fetch recent posts
     const fetchRecentPosts = async () => {
       try {
-        const response = await axios.get(`https://jbb-backend-webservice.onrender.com/api/getAllPosts?page=1&limit=10`);
+        const response = await axios.get(`https://jbb-fullstack.onrender.com/api/getAllPosts?page=1&limit=10`);
         recentPosts.value = response.data; // Set the fetched posts to the recentPosts array
       } catch (error) {
         console.error("Error fetching recent posts:", error);

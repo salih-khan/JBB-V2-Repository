@@ -34,7 +34,7 @@
                 <li><router-link class="dropdown-item" :to="'/profiles/' + user._id">Profile</router-link></li>
                 <li><a class="dropdown-item" href="#">Settings</a></li>
                 <li><hr class="dropdown-divider"></li>
-                <a class="dropdown-item logout-btn" href="https://jbb-backend-webservice.onrender.com/auth/logout">Logout</a>
+                <a class="dropdown-item logout-btn" href="https://jbb-fullstack.onrender.com/auth/logout">Logout</a>
               </ul>
             </div>
           </div>
@@ -88,7 +88,7 @@
   
       const signIn = () => {
         if (!isAuthenticated.value) {
-          window.location.href = 'https://jbb-backend-webservice.onrender.com/auth/google'; // Redirect to backend
+          window.location.href = 'https://jbb-fullstack.onrender.com/auth/google'; // Redirect to backend
         }
       };
   
@@ -96,7 +96,7 @@
         if (isAuthenticated.value) {
           router.push({ name: 'Create' });
         } else {
-          window.location.href = 'https://jbb-backend-webservice.onrender.com/auth/google';
+          window.location.href = 'https://jbb-fullstack.onrender.com/auth/google';
         }
       };
 

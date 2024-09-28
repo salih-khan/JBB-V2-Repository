@@ -45,7 +45,7 @@ export default {
       loading.value = true; // Set loading to true
 
       try {
-        const response = await axios.get(`https://jbb-backend-webservice.onrender.com/api/getAllPosts?page=${page.value}&limit=${limit}`);
+        const response = await axios.get(`https://jbb-fullstack.onrender.com/api/getAllPosts?page=${page.value}&limit=${limit}`);
         const posts = response.data;
 
         if (posts.length > 0) {

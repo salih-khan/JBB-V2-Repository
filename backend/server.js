@@ -31,9 +31,9 @@ const startServer = async () => {
     // Content Security Policy
     app.use(helmet.contentSecurityPolicy({
       directives: {
-        defaultSrc: ["'self'", 'https://jbb-backend-webservice.onrender.com'],
+        defaultSrc: ["'self'", 'https://jbb-fullstack.onrender.com'],
         imgSrc: ["'self'", 'data:', 'https://*'],
-        connectSrc: ["'self'", 'https://jbb-backend-webservice.onrender.com'],
+        connectSrc: ["'self'", 'https://jbb-fullstack.onrender.com'],
         scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://*'],
         styleSrc: ["'self'", "'unsafe-inline'", 'https://*'],
       },
