@@ -8,27 +8,26 @@ const cors = require('cors');
 require('dotenv').config();
 require('./config/passport.config');
 
-const { connectPrimaryDB, connectPostsDB } = require('./config/db.config'); // Import from db.config
+const { connectPrimaryDB, connectPostsDB } = require('./config/db.config');
 
 const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {
   try {
-    const primaryConnection = await connectPrimaryDB();  // Ensure primary connection is established
-    const postsDbConnection = await connectPostsDB();    // Ensure posts connection is established
+    const primaryConnection = await connectPrimaryDB();
+    const postsDbConnection = await connectPostsDB();
 
-    const Post = require('./models/post.models');  // Ensure this import is correct
+    const Post = require('./models/post.models');
 
     const app = express();
 
     // CORS configuration
     const corsOptions = {
-      origin: 'https://jbb-frontend.onrender.com', // Allow only your frontend
-      methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods if needed
-      credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+      origin: 'https://jbb-frontend.onrender.com',
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+      credentials: true,
     };
 
-    // Apply CORS middleware
     app.use(cors(corsOptions));
 
     app.use(helmet({
@@ -36,8 +35,8 @@ const startServer = async () => {
         directives: {
           defaultSrc: ["'self'"],
           imgSrc: ["'self'", "data:", "blob:", "*"],
-          mediaSrc: ["'self'", "*"], // Allow video sources
-          connectSrc: ["'self'", "https://accounts.google.com"], // Allow connections to Google accounts
+          mediaSrc: ["'self'", "*"],
+          connectSrc: ["'self'", "https://accounts.google.com"],
         }
       }
     }));
@@ -50,11 +49,11 @@ const startServer = async () => {
         mongoUrl: process.env.MONGODB_URI,
         dbName: 'Accounts',
         collectionName: 'sessions',
-        client: primaryConnection.client // Use the primary database connection here
+        client: primaryConnection.client,
       }),
       cookie: {
-        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-        maxAge: 1000 * 60 * 60 * 24 // 1 day
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 1000 * 60 * 60 * 24, // 1 day
       }
     }));
 
@@ -62,7 +61,7 @@ const startServer = async () => {
     app.use(passport.session());
 
     // Serve static files from the frontend directory
-    app.use(express.static(path.resolve('frontend', 'dist')));
+    app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
     const authRoutes = require('./routes/auth.routes');
     const userRoutes = require('./routes/user.routes');
@@ -72,14 +71,15 @@ const startServer = async () => {
 
     // Catch-all route for serving the frontend
     app.get('*', (req, res) => {
-      res.sendFile(path.resolve('frontend', 'dist', 'index.html')); // Using path.resolve instead of __dirname
+      console.log('Catch-all route hit for:', req.originalUrl); // Debugging output
+      res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
     });
 
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
 
-    return { postsDbConnection, Post };  // Return the posts connection and model
+    return { postsDbConnection, Post };
   } catch (error) {
     console.error('Error initializing server:', error);
     process.exit(1);
