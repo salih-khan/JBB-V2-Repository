@@ -1,15 +1,18 @@
-const express = require('express');
-const path = require('path');
-const helmet = require('helmet');
-const passport = require('passport');
-const session = require('express-session');
-const MongoStore = require('connect-mongo');
-const cors = require('cors');
-const { createProxyMiddleware } = require('http-proxy-middleware');
-require('dotenv').config();
-require('./config/passport.config');
+import express from 'express';
+import path from 'path';
+import helmet from 'helmet';
+import passport from 'passport';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
+import cors from 'cors';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import { connectPrimaryDB, connectPostsDB } from './config/db.config.js'; // Ensure your db.config.js is an ES module
+import authRoutes from './routes/auth.routes.js'; // Ensure your routes are ES modules
+import userRoutes from './routes/user.routes.js';
 
-const { connectPrimaryDB, connectPostsDB } = require('./config/db.config');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const PORT = process.env.PORT || 3000;
 
@@ -72,34 +75,16 @@ const startServer = async () => {
     });
 
     // Serve static files from the frontend directory
-    // app.use(express.static(path.join(__dirname, '../frontend/dist')));
-
-    const authRoutes = require('./routes/auth.routes');
-    const userRoutes = require('./routes/user.routes');
+    app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
     app.use(authRoutes);
     app.use(userRoutes);
 
     // Catch-all route for serving the frontend
-    // app.get('/*', (req, res) => {
-    //   console.log('Catch-all route hit for:', req.originalUrl); // Debugging output
-    //   res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
-    // });
-
-    // Proxy all other requests to the frontend
-    app.use('/*', createProxyMiddleware({
-      target: 'https://jbb-frontend.onrender.com', // Target your frontend
-      changeOrigin: true, // Changes the origin of the host header to the target URL
-      secure: false, // If your target is an HTTPS server, keep this true
-      pathRewrite: {
-        '^/api': '', // Optional: If you want to remove '/api' prefix in the request
-        '^/': '/', // Keeps the same URL path
-      },
-      onProxyRes: (proxyRes, req, res) => {
-        proxyRes.headers['X-Proxy-By'] = 'Backend Proxy'; // Add custom headers if needed
-      },
-    }));
-
+    app.get('*', (req, res) => {
+      console.log('Catch-all route hit for:', req.originalUrl); // Debugging output
+      res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+    });
 
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
