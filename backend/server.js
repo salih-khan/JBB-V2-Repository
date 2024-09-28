@@ -80,7 +80,7 @@ const startServer = async () => {
     app.use(userRoutes);
 
     // Catch-all route for serving the frontend
-    app.get('*', (req, res) => {
+    app.get('/*', (req, res) => {
       console.log('Catch-all route hit for:', req.originalUrl); // Debugging output
       res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
     });
