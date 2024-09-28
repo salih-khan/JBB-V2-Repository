@@ -85,10 +85,16 @@ const startServer = async () => {
     //   res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
     // });
 
-
-    app.get('/*', (req, res) => {
-      res.redirect(`https://jbb-frontend.onrender.com/`);
-    });
+    // Proxy all other requests to the frontend
+    app.use('/*', createProxyMiddleware({
+      origin: ['https://jbb-frontend.onrender.com', 'https://jbb-backend-webservice.onrender.com'],
+      changeOrigin: true,
+      secure: false,
+      onProxyRes: (proxyRes, req, res) => {
+        proxyRes.headers['X-Proxy-By'] = 'Backend Proxy'; // Add custom headers if needed
+      },
+      pathRewrite: (path, req) => path, // Keeps the same URL path
+    }));
 
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
