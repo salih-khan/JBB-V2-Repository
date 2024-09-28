@@ -55,7 +55,12 @@ const routes = [
     path: '/development',
     name: 'Development',
     component: DevLog,
+  },
+  {
+    path: '*', // Catch-all route
+    redirect: '/' // Redirect all unknown routes to the home page
   }
+
 ];
 
 const router = createRouter({
