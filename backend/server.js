@@ -1,18 +1,12 @@
 import express from 'express';
-import path from 'path';
 import helmet from 'helmet';
 import passport from 'passport';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import cors from 'cors';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-import { connectPrimaryDB, connectPostsDB } from './config/db.config.js'; // Ensure your db.config.js is an ES module
-import authRoutes from './routes/auth.routes.js'; // Ensure your routes are ES modules
+import { connectPrimaryDB, connectPostsDB } from './config/db.config.js';
+import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 const PORT = process.env.PORT || 3000;
 
@@ -20,8 +14,6 @@ const startServer = async () => {
   try {
     const primaryConnection = await connectPrimaryDB();
     const postsDbConnection = await connectPostsDB();
-
-    const Post = require('./models/post.models');
 
     const app = express();
 
@@ -33,17 +25,7 @@ const startServer = async () => {
     };
 
     app.use(cors(corsOptions));
-
-    app.use(helmet({
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"],
-          imgSrc: ["'self'", "data:", "blob:", "*"],
-          mediaSrc: ["'self'", "*"],
-          connectSrc: ["'self'", "https://accounts.google.com"],
-        }
-      }
-    }));
+    app.use(helmet());
 
     app.use(session({
       secret: process.env.SESSION_SECRET,
@@ -64,33 +46,15 @@ const startServer = async () => {
     app.use(passport.initialize());
     app.use(passport.session());
 
-    // Cache control middleware
-    app.use((req, res, next) => {
-      if (req.path.endsWith('.html')) {
-        res.set('Cache-Control', 'no-store'); // No caching for HTML
-      } else {
-        res.set('Cache-Control', 'public, max-age=31536000'); // 1 year for static assets
-      }
-      next();
-    });
-
-    // Serve static files from the frontend directory
-    app.use(express.static(path.join(__dirname, '../frontend/dist')));
-
+    // API routes
     app.use(authRoutes);
     app.use(userRoutes);
-
-    // Catch-all route for serving the frontend
-    app.get('*', (req, res) => {
-      console.log('Catch-all route hit for:', req.originalUrl); // Debugging output
-      res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
-    });
 
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
 
-    return { postsDbConnection, Post };
+    return { postsDbConnection };
   } catch (error) {
     console.error('Error initializing server:', error);
     process.exit(1);
