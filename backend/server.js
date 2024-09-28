@@ -87,9 +87,9 @@ const startServer = async () => {
 
 
     app.get('/*', (req, res) => {
-      res.redirect(`https://jbb-frontend.onrender.com${req.originalUrl}`);
+      res.redirect(`https://jbb-frontend.onrender.com/`);
     });
-    
+
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
