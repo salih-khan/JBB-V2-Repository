@@ -28,8 +28,9 @@ const startServer = async () => {
       credentials: true, // Allow credentials (cookies, authorization headers, etc.)
     };
 
-    // Apply CORS and Helmet middleware
+    // Apply CORS middleware
     app.use(cors(corsOptions));
+
     app.use(helmet({
       contentSecurityPolicy: {
         directives: {
@@ -59,7 +60,9 @@ const startServer = async () => {
 
     app.use(passport.initialize());
     app.use(passport.session());
-    app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+    // Serve static files from the frontend directory
+    app.use(express.static(path.resolve('frontend', 'dist')));
 
     const authRoutes = require('./routes/auth.routes');
     const userRoutes = require('./routes/user.routes');
@@ -67,17 +70,14 @@ const startServer = async () => {
     app.use(authRoutes);
     app.use(userRoutes);
 
+    // Catch-all route for serving the frontend
     app.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+      res.sendFile(path.resolve('frontend', 'dist', 'index.html')); // Using path.resolve instead of __dirname
     });
 
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
-
-    // Example usage
-    // const newPost = new Post({ title: 'Sample', description: 'Description', date: new Date() });
-    // await newPost.save();
 
     return { postsDbConnection, Post };  // Return the posts connection and model
   } catch (error) {
