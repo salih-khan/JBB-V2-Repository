@@ -1,12 +1,12 @@
-import express from 'express';
-import helmet from 'helmet';
-import passport from 'passport';
-import session from 'express-session';
-import MongoStore from 'connect-mongo';
-import cors from 'cors';
-import { connectPrimaryDB, connectPostsDB } from './config/db.config.js';
-import authRoutes from './routes/auth.routes.js';
-import userRoutes from './routes/user.routes.js';
+const express = require('express');
+const helmet = require('helmet');
+const passport = require('passport');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+const cors = require('cors');
+const { connectPrimaryDB, connectPostsDB } = require('./config/db.config'); // Adjust the path as needed
+const authRoutes = require('./routes/auth.routes');
+const userRoutes = require('./routes/user.routes');
 
 const PORT = process.env.PORT || 3000;
 
