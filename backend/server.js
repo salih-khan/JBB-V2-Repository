@@ -4,6 +4,7 @@ const passport = require('passport');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const cors = require('cors');
+const path = require('path'); // Import path for serving static files
 const { connectPrimaryDB, connectPostsDB } = require('./config/db.config'); // Adjust the path as needed
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
@@ -49,6 +50,14 @@ const startServer = async () => {
     // API routes
     app.use(authRoutes);
     app.use(userRoutes);
+
+    // Serve static files from the frontend build directory
+    app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+    // Catch-all route for serving the frontend application
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+    });
 
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
