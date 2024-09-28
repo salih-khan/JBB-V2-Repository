@@ -58,7 +58,7 @@ const routes = [
   },
   {
     path: '*', // Catch-all route
-    redirect: '/' // Redirect all unknown routes to the home page
+    component: HomeView
   }
 
 ];
