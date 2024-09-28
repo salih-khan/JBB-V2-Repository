@@ -71,7 +71,7 @@ const startServer = async () => {
     });
 
     // Serve static files from the frontend directory
-    app.use(express.static(path.join(__dirname, '../frontend/dist')));
+    // app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
     const authRoutes = require('./routes/auth.routes');
     const userRoutes = require('./routes/user.routes');
@@ -80,10 +80,10 @@ const startServer = async () => {
     app.use(userRoutes);
 
     // Catch-all route for serving the frontend
-    app.get('/*', (req, res) => {
-      console.log('Catch-all route hit for:', req.originalUrl); // Debugging output
-      res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
-    });
+    // app.get('/*', (req, res) => {
+    //   console.log('Catch-all route hit for:', req.originalUrl); // Debugging output
+    //   res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+    // });
 
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
