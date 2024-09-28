@@ -390,7 +390,7 @@ export default {
 
     const getAccountInfo = async (id) => {
       try {
-        const response = await axios.get('/api/getAllUsers');
+        const response = await axios.get('https://jbb-backend-webservice.onrender.com/api/getAllUsers');
         const users = response.data;
         console.log('API Response:', users);
 
@@ -412,7 +412,7 @@ export default {
           console.log('Is Current User: ', isCurrentUser.value);
 
           const postsResponse = await axios.get(
-              `/api/getAllPostsFromUser`,
+              `https://jbb-backend-webservice.onrender.com/api/getAllPostsFromUser`,
               {
                 params: {
                   nameId: currentUser.nameId,

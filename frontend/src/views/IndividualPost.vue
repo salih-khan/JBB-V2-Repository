@@ -98,7 +98,7 @@ export default {
     const post = ref(null);
     const user = ref(null);
     const recentPosts = ref([]); // Holds the recent posts
-    const placeholderImage = "path/to/placeholder.jpg"; // Add your placeholder image URL here
+    const placeholderImage = "https://via.placeholder.com/300x200"; // Add your placeholder image URL here
     const selectedImage = ref(null); // To hold the selected image/video for modal
     const isModalOpen = ref(false); // To manage modal visibility
     const route = useRoute();
@@ -107,7 +107,7 @@ export default {
     const fetchPost = async () => {
       try {
         const { postId } = route.params;
-        const response = await axios.get(`/api/getIndividualPost/${postId}`);
+        const response = await axios.get(`https://jbb-backend-webservice.onrender.com/api/getIndividualPost/${postId}`);
         const responseData = response.data;
         post.value = responseData.post;
         user.value = responseData.user;
@@ -119,7 +119,7 @@ export default {
     // Fetch recent posts
     const fetchRecentPosts = async () => {
       try {
-        const response = await axios.get(`/api/getAllPosts?page=1&limit=10`);
+        const response = await axios.get(`https://jbb-backend-webservice.onrender.com/api/getAllPosts?page=1&limit=10`);
         recentPosts.value = response.data; // Set the fetched posts to the recentPosts array
       } catch (error) {
         console.error("Error fetching recent posts:", error);

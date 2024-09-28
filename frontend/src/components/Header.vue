@@ -34,7 +34,7 @@
                 <li><router-link class="dropdown-item" :to="'/profiles/' + user._id">Profile</router-link></li>
                 <li><a class="dropdown-item" href="#">Settings</a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item logout-btn" href="/auth/logout">Logout</a></li>
+                <a class="dropdown-item logout-btn" href="https://jbb-backend-webservice.onrender.com/auth/logout">Logout</a>
               </ul>
             </div>
           </div>
@@ -88,7 +88,7 @@
   
       const signIn = () => {
         if (!isAuthenticated.value) {
-          window.location.href = '/auth/google';
+          window.location.href = 'https://jbb-backend-webservice.onrender.com/auth/google';
         }
       };
   
@@ -96,7 +96,7 @@
         if (isAuthenticated.value) {
           router.push({ name: 'Create' });
         } else {
-          window.location.href = '/auth/google';
+          window.location.href = 'https://jbb-backend-webservice.onrender.com/auth/google';
         }
       };
 

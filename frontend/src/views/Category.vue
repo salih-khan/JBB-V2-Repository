@@ -75,7 +75,7 @@ export default {
 
     const fetchPosts = async () => {
       try {
-        const response = await axios.get(`/api/getAllPostsFromCategory`);
+        const response = await axios.get(`https://jbb-backend-webservice.onrender.com/api/getAllPostsFromCategory`);
         posts.value = response.data;
       } catch (error) {
         console.error('Error fetching posts:', error);

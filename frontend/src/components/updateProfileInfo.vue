@@ -50,7 +50,7 @@ export default {
 
     const fetchCurrentUser = async () => {
       try {
-        const response = await axios.get('/api/user');
+        const response = await axios.get('https://jbb-backend-webservice.onrender.com/api/user');
         const user = response.data;
         displayName.value = user.displayName || '';
         bio.value = user.description || '';
@@ -111,9 +111,10 @@ export default {
       if (pfp.value) formData.append('pfp', pfp.value);
 
       try {
-        const response = await axios.post('/api/updateProfile', formData, {
+        const response = await axios.post('https://jbb-backend-webservice.onrender.com/api/updateProfile', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
+
 
         console.log('Response:', response.data);
         emit('profileUpdated');

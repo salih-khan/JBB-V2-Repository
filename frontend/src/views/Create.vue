@@ -323,7 +323,7 @@ export default {
       formData.append('nsfw', addNSFWTag.value);
 
       try {
-        const response = await fetch('/api/newPost', {
+        const response = await fetch('https://jbb-backend-webservice.onrender.com/api/newPost', {
           method: 'POST',
           body: formData,
         });
@@ -331,7 +331,7 @@ export default {
         if (response.ok) {
           isLoading.value = false; // Ensure loading is false after submission
           alert('Post submitted successfully!');
-          window.location = '/';
+          window.location = 'https://jbb-backend-webservice.onrender.com/';
         } else {
           alert('Failed to submit post');
         }
