@@ -60,6 +60,16 @@ const startServer = async () => {
     app.use(passport.initialize());
     app.use(passport.session());
 
+    // Cache control middleware
+    app.use((req, res, next) => {
+      if (req.path.endsWith('.html')) {
+        res.set('Cache-Control', 'no-store'); // No caching for HTML
+      } else {
+        res.set('Cache-Control', 'public, max-age=31536000'); // 1 year for static assets
+      }
+      next();
+    });
+
     // Serve static files from the frontend directory
     app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
