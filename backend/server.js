@@ -28,7 +28,7 @@ const startServer = async () => {
       credentials: true, // Allow credentials (cookies, authorization headers, etc.)
     };
 
-// Apply CORS and Helmet middleware
+    // Apply CORS and Helmet middleware
     app.use(cors(corsOptions));
     app.use(helmet({
       contentSecurityPolicy: {
@@ -41,19 +41,6 @@ const startServer = async () => {
       }
     }));
 
-    app.use(cors());
-    app.use(helmet({
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"],
-          imgSrc: ["'self'", "data:", "blob:", "*"],
-          mediaSrc: ["'self'", "*"], // Allow video sources
-          connectSrc: ["'self'", "https://accounts.google.com"]
-        }
-      }
-    }));
-
-
     app.use(session({
       secret: process.env.SESSION_SECRET,
       resave: true,
@@ -65,8 +52,8 @@ const startServer = async () => {
         client: primaryConnection.client // Use the primary database connection here
       }),
       cookie: {
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 1000 * 60 * 60 * 24
+        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+        maxAge: 1000 * 60 * 60 * 24 // 1 day
       }
     }));
 
@@ -84,11 +71,9 @@ const startServer = async () => {
       res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
     });
 
-    app.listen(process.env.PORT || 3000, () => {
+    app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
-
-
 
     // Example usage
     // const newPost = new Post({ title: 'Sample', description: 'Description', date: new Date() });
