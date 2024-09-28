@@ -9,7 +9,7 @@
 
         <div class="post-meta">
           <p>
-            By: <a :href="`http://localhost:3000/profiles/${user._id}`" target="_blank">{{ user.displayName }} - {{ post.nameId }}</a>
+            By: <a :href="`https://jbb-frontend.onrender.com/profiles/${user._id}`" target="_blank">{{ user.displayName }} - {{ post.nameId }}</a>
           </p>
           <span class="post-date">{{ formatDate(post.date) }}</span>
         </div>
@@ -71,7 +71,7 @@
         <h4>Recent Posts</h4>
         <ul>
           <li v-for="(recentPost, index) in recentPosts" :key="index" class="recent-post-item">
-            <a :href="`/category/palestine/${recentPost._id}`">{{ recentPost.title }}</a>
+            <router-link :to="`/category/palestine/${recentPost._id}`">{{ recentPost.title }}</router-link>
           </li>
         </ul>
       </div>

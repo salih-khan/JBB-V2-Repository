@@ -21,6 +21,26 @@ const startServer = async () => {
 
     const app = express();
 
+    // CORS configuration
+    const corsOptions = {
+      origin: 'https://jbb-frontend.onrender.com', // Allow only your frontend
+      methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods if needed
+      credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+    };
+
+// Apply CORS and Helmet middleware
+    app.use(cors(corsOptions));
+    app.use(helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          imgSrc: ["'self'", "data:", "blob:", "*"],
+          mediaSrc: ["'self'", "*"], // Allow video sources
+          connectSrc: ["'self'", "https://accounts.google.com"], // Allow connections to Google accounts
+        }
+      }
+    }));
+
     app.use(cors());
     app.use(helmet({
       contentSecurityPolicy: {
