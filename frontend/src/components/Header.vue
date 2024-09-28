@@ -88,7 +88,7 @@
   
       const signIn = () => {
         if (!isAuthenticated.value) {
-          window.location.href = 'https://jbb-backend-webservice.onrender.com/auth/google';
+          window.location.href = 'https://jbb-backend-webservice.onrender.com/auth/google'; // Redirect to backend
         }
       };
   
