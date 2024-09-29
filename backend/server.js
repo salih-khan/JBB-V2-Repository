@@ -21,7 +21,7 @@ const startServer = async () => {
     // CORS configuration
     const corsOptions = {
       origin: 'https://jbb-fullstack.onrender.com', // Your frontend URL
-      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Update allowed methods
       credentials: true,
     };
 
