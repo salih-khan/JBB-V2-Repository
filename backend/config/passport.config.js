@@ -4,7 +4,7 @@ const User = require('../models/user.models');
 const { verifyCallbackFunction } = require('../controllers/auth.controllers');
 
 const AUTH_OPTIONS = {
-    callbackURL: 'https://jbb-frontend.onrender.com/auth/google/callback',  // Use the frontend domain
+    callbackURL: 'https://jbb-fullstack.onrender.com/auth/google/callback',
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET
 }; 
