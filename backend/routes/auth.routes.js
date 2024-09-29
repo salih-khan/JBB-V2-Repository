@@ -12,11 +12,13 @@ router.get('/auth/google', passport.authenticate('google', {
 }));
 
 router.get('/auth/google/callback', passport.authenticate('google', {
-    failureRedirect: `${FRONTEND_URL}/`, // Redirect to frontend login page on failure //change later so there is a failed login page
+    failureRedirect: `${FRONTEND_URL}/`, // Redirect to frontend login page on failure
     successRedirect: `${FRONTEND_URL}/`, // Redirect to frontend homepage on success
-    session: true
+    session: true // Session management is enabled
 }), (req, res) => {
     console.log("Google called us back");
+    // Here, you can also send additional user information if needed
+    console.log("Authenticated user:", req.user); // Log authenticated user
 });
 
 router.get('/auth/logout', (req, res) => {
