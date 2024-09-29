@@ -3,26 +3,27 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 export function useAuthValidate() {
-  const isAuthenticated = ref(false); //will be used to verify the authentication of the user
+  const isAuthenticated = ref(false); // Will be used to verify the authentication of the user
   const user = ref(null);
   const router = useRouter();
 
   const fetchUser = async () => {
     try {
       const response = await axios.get('https://jbb-fullstack.onrender.com/api/user', {
-        withCredentials: true
+        withCredentials: true // Ensure cookies are sent with the request
       });
 
-      if (response.ok) {
-        console.log('Response received:', response);
-        const userData = await response.json();
+      // Axios responses are handled differently, check for successful response
+      if (response.status === 200) {
+        console.log('Response received:', response.data);
         isAuthenticated.value = true;
-        user.value = userData;
+        user.value = response.data; // Directly use response.data
       } else {
-        isAuthenticated.value = false; //change to false later
-        user.value = null; // change to null after
+        isAuthenticated.value = false;
+        user.value = null;
       }
     } catch (error) {
+      console.error('Error fetching user:', error); // Log the error
       isAuthenticated.value = false;
       user.value = null;
     }
