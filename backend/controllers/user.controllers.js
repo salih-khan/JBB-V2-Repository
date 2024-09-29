@@ -12,6 +12,7 @@ const initializeModels = require('../models/post.models'); // Import model initi
 function getUser(req, res) {
     console.log('Request headers:', req.headers);
     console.log('Session data:', req.session);
+    console.log('***********************User from request:', req.user); // Log user directly from the request
 
     if (req.user) {
         console.log("User from server: ", req.user);
