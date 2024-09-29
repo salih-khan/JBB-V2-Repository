@@ -25,6 +25,8 @@ const startServer = async () => {
       credentials: true,
     };
 
+    require('./config/passport.config'); // Ensure the passport strategy is loaded
+
     app.use(cors(corsOptions));
     app.use(helmet());
 
