@@ -2,7 +2,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 export function useAuthValidate() {
-  const isAuthenticated = ref(false);
+  const isAuthenticated = ref(false); //will be used to verify the authentication of the user
   const user = ref(null);
   const router = useRouter();
 

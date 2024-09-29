@@ -51,7 +51,7 @@ const startServer = async () => {
         mongoUrl: process.env.MONGODB_URI,
         dbName: 'Accounts',
         collectionName: 'sessions',
-        client: primaryConnection.client,
+        client: true, //primaryConnection.client
       }),
       cookie: {
         secure: process.env.NODE_ENV === 'production',
