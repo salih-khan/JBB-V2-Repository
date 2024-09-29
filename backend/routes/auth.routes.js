@@ -5,7 +5,7 @@ const router = express.Router();
 
 // Get the base URL from environment variables
 const BASE_URL = process.env.VUE_APP_API_URL || 'http://localhost:3000'; // Fallback to local for development
-const FRONTEND_URL = 'https://jbb-frontend.onrender.com'; // Frontend URL
+const FRONTEND_URL = 'https://jbb-fullstack.onrender.com'; // Frontend URL
 
 router.get('/auth/google', passport.authenticate('google', {
     scope: ['email', 'profile']

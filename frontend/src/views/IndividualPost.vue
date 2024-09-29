@@ -9,7 +9,7 @@
 
         <div class="post-meta">
           <p>
-            By: <a :href="`https://jbb-frontend.onrender.com/profiles/${user._id}`" target="_blank">{{ user.displayName }} - {{ post.nameId }}</a>
+            By: <a :href="`https://jbb-fullstack.onrender.com/profiles/${user._id}`" target="_blank">{{ user.displayName }} - {{ post.nameId }}</a>
           </p>
           <span class="post-date">{{ formatDate(post.date) }}</span>
         </div>
