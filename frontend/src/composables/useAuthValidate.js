@@ -9,7 +9,7 @@ export function useAuthValidate() {
 
   const fetchUser = async () => {
     try {
-      const response = await axios.get('https://jbb-fullstack.onrender.com/api/user', {
+      const response = await axios.get('/api/user', {
         withCredentials: true // Ensure cookies are sent with the request
       });
 

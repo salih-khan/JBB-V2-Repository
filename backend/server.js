@@ -73,7 +73,7 @@ const startServer = async () => {
         client: true, //primaryConnection.client
       }),
       cookie: {
-        secure: process.env.NODE_ENV === 'production',
+        secure: true, //process.env.NODE_ENV === 'production',
         maxAge: 1000 * 60 * 60 * 24, // 1 day
       }
     }));
