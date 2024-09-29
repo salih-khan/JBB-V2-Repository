@@ -34,13 +34,32 @@ const startServer = async () => {
     app.use(helmet.contentSecurityPolicy({
       directives: {
         defaultSrc: ["'self'", 'https://jbb-fullstack.onrender.com'],
-        imgSrc: ["'self'", 'data:', 'https://*'], // Allows images
+        imgSrc: ["'self'", 'data:', 'https://*', 'https://*.googleusercontent.com'], // Allow Google user profile images
         mediaSrc: ["'self'", 'https://*', 'https://*.youtube.com', 'https://*.vimeo.com'], // Allows video sources
-        connectSrc: ["'self'", 'https://jbb-fullstack.onrender.com', 'https://*.googleapis.com'], // API and external resources
-        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://*'], // Allows inline scripts
-        styleSrc: ["'self'", "'unsafe-inline'", 'https://*'], // Allows inline styles
+        connectSrc: [
+          "'self'",
+          'https://jbb-fullstack.onrender.com',
+          'https://*.googleapis.com',
+          'https://*.gstatic.com', // Added for Google static content
+          'https://*.google.com' // Allow connections to Google
+        ], // API and external resources
+        scriptSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "'unsafe-eval'",
+          'https://*',
+          'https://*.google.com', // Allow Google scripts
+          'https://*.googleusercontent.com' // Allow Google user profile scripts
+        ], // Allows inline scripts
+        styleSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          'https://*',
+          'https://*.google.com' // Allow Google styles
+        ], // Allows inline styles
       },
     }));
+
 
     // Session configuration
     app.use(session({
