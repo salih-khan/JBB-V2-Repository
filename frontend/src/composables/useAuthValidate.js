@@ -14,6 +14,7 @@ export function useAuthValidate() {
       });
 
       if (response.ok) {
+        console.log('Response received:', response);
         const userData = await response.json();
         isAuthenticated.value = true;
         user.value = userData;

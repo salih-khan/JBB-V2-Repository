@@ -10,6 +10,9 @@ const initializeModels = require('../models/post.models'); // Import model initi
 
 // Function to get the current user
 function getUser(req, res) {
+    console.log('Request headers:', req.headers);
+    console.log('Session data:', req.session);
+
     if (req.user) {
         console.log("User from server: ", req.user);
         return res.json({
