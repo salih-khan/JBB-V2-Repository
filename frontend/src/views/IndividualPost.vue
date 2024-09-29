@@ -71,7 +71,7 @@
         <h4>Recent Posts</h4>
         <ul>
           <li v-for="(recentPost, index) in recentPosts" :key="index" class="recent-post-item">
-            <router-link :to="`/category/palestine/${recentPost._id}`">{{ recentPost.title }}</router-link>
+            <a :href="`/category/palestine/${recentPost._id}`">{{ recentPost.title }}</a>
           </li>
         </ul>
       </div>

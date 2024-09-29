@@ -20,7 +20,7 @@ const startServer = async () => {
 
     // CORS configuration
     const corsOptions = {
-      origin: 'https://jbb-frontend.onrender.com',
+      origin: 'https://jbb-fullstack.onrender.com', // Your frontend URL
       methods: ['GET', 'POST', 'PUT', 'DELETE'],
       credentials: true,
     };
@@ -28,17 +28,19 @@ const startServer = async () => {
     app.use(cors(corsOptions));
     app.use(helmet());
 
-    // Content Security Policy
+    // Content Security Policy to allow videos and other resources
     app.use(helmet.contentSecurityPolicy({
       directives: {
         defaultSrc: ["'self'", 'https://jbb-fullstack.onrender.com'],
-        imgSrc: ["'self'", 'data:', 'https://*'],
-        connectSrc: ["'self'", 'https://jbb-fullstack.onrender.com'],
-        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://*'],
-        styleSrc: ["'self'", "'unsafe-inline'", 'https://*'],
+        imgSrc: ["'self'", 'data:', 'https://*'], // Allows images
+        mediaSrc: ["'self'", 'https://*', 'https://*.youtube.com', 'https://*.vimeo.com'], // Allows video sources
+        connectSrc: ["'self'", 'https://jbb-fullstack.onrender.com', 'https://*.googleapis.com'], // API and external resources
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://*'], // Allows inline scripts
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://*'], // Allows inline styles
       },
     }));
 
+    // Session configuration
     app.use(session({
       secret: process.env.SESSION_SECRET,
       resave: true,
