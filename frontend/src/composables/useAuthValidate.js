@@ -1,5 +1,6 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
 export function useAuthValidate() {
   const isAuthenticated = ref(false); //will be used to verify the authentication of the user
@@ -8,9 +9,10 @@ export function useAuthValidate() {
 
   const fetchUser = async () => {
     try {
-      const response = await fetch('https://jbb-fullstack.onrender.com/api/user', {
-        credentials: 'include'
+      const response = await axios.get('https://jbb-fullstack.onrender.com/api/user', {
+        withCredentials: true
       });
+
       if (response.ok) {
         const userData = await response.json();
         isAuthenticated.value = true;
