@@ -74,7 +74,7 @@ const startServer = async () => {
       }),
       cookie: {
         secure: process.env.NODE_ENV === 'production',
-        httpOnly: true, // Prevents JavaScript access to cookies, for security
+        httpOnly: false, // Prevents JavaScript access to cookies, for security
         maxAge: 1000 * 60 * 60 * 24, // 1 day
       }
     }));
