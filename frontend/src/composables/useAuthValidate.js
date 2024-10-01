@@ -9,26 +9,22 @@ export function useAuthValidate() {
 
   const fetchUser = async () => {
     try {
-      const response = await axios.get('/api/user', {
-        withCredentials: true // Ensure cookies are sent with the request
+      const response = await fetch('/api/user', {
+        credentials: 'include'
       });
-
-      // Axios responses are handled differently, check for successful response
-      if (response.status === 200) {
-        console.log('Response received:', response.data);
+      if (response.ok) {
+        const userData = await response.json();
         isAuthenticated.value = true;
-        user.value = response.data; // Directly use response.data
+        user.value = userData;
       } else {
-        isAuthenticated.value = false;
-        user.value = null;
+        isAuthenticated.value = false; //change to false later
+        user.value = null; // change to null after
       }
     } catch (error) {
-      console.error('Error fetching user:', error); // Log the error
       isAuthenticated.value = false;
       user.value = null;
     }
   };
-
   return {
     isAuthenticated,
     user,
