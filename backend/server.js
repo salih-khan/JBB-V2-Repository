@@ -31,15 +31,33 @@ const startServer = async () => {
     app.use(helmet());
 
     // Content Security Policy to allow videos and other resources
-    app.use(helmet({
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"],
-          imgSrc: ["'self'", "data:", "blob:", "*"],
-          mediaSrc: ["'self'", "*"], // Allow video sources
-          connectSrc: ["'self'", "https://accounts.google.com"]
-        }
-      }
+    app.use(helmet.contentSecurityPolicy({
+      directives: {
+        defaultSrc: ["'self'", 'https://jbb-fullstack.onrender.com'],
+        imgSrc: ["'self'", 'data:', 'https://*', 'https://*.googleusercontent.com'], // Allow Google user profile images
+        mediaSrc: ["'self'", 'https://*', 'https://*.youtube.com', 'https://*.vimeo.com'], // Allows video sources
+        connectSrc: [
+          "'self'",
+          'https://jbb-fullstack.onrender.com',
+          'https://*.googleapis.com',
+          'https://*.gstatic.com', // Added for Google static content
+          'https://*.google.com' // Allow connections to Google
+        ], // API and external resources
+        scriptSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "'unsafe-eval'",
+          'https://*',
+          'https://*.google.com', // Allow Google scripts
+          'https://*.googleusercontent.com' // Allow Google user profile scripts
+        ], // Allows inline scripts
+        styleSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          'https://*',
+          'https://*.google.com' // Allow Google styles
+        ], // Allows inline styles
+      },
     }));
 
 
