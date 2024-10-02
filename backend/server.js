@@ -25,7 +25,7 @@ const startServer = async () => {
     app.use(helmet({
       contentSecurityPolicy: {
         directives: {
-          defaultSrc: ["'self'"],
+          defaultSrc: ["'self', 'jbb-fullstack.onrender.com'"],
           imgSrc: ["'self'", "data:", "blob:", "*"],
           mediaSrc: ["'self'", "*"], // Allow video sources
           connectSrc: ["'self'", "https://accounts.google.com"]
