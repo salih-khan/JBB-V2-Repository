@@ -157,6 +157,7 @@ export default {
   setup() {
     //for the spinner
     const isLoading = ref(false);
+    const apiBaseUrl = process.env.VUE_APP_API_URL;
 
     const showTermsAndConditions = ref(false);
 
@@ -323,7 +324,7 @@ export default {
       formData.append('nsfw', addNSFWTag.value);
 
       try {
-        const response = await fetch('/api/newPost', {
+        const response = await fetch(`${apiBaseUrl}/api/newPost`, {
           method: 'POST',
           body: formData,
         });

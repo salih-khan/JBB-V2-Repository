@@ -31,9 +31,11 @@ export default {
     const users = ref([]);
     const router = useRouter();
 
+    const apiBaseUrl = process.env.VUE_APP_API_URL;
+
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('/api/getAllUsers');
+        const response = await axios.get(`${apiBaseUrl}/api/getAllUsers`);
         console.log('API Response:', response.data);
         users.value = response.data;
       } catch (error) {

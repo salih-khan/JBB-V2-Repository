@@ -72,10 +72,12 @@ export default {
   },
   setup() {
     const posts = ref([]);
+    const apiBaseUrl = process.env.VUE_APP_API_URL;
+
 
     const fetchPosts = async () => {
       try {
-        const response = await axios.get(`/api/getAllPostsFromCategory`);
+        const response = await axios.get(`${apiBaseUrl}/api/getAllPostsFromCategory`);
         posts.value = response.data;
       } catch (error) {
         console.error('Error fetching posts:', error);

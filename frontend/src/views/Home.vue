@@ -40,12 +40,14 @@ export default {
     const allPostsLoaded = ref(false);
     const loading = ref(false); // Loading state
 
+    const apiBaseUrl = process.env.VUE_APP_API_URL;
+
     const loadAllPosts = async () => {
       if (loading.value || allPostsLoaded.value) return; // Prevent multiple loads
       loading.value = true; // Set loading to true
 
       try {
-        const response = await axios.get(`/api/getAllPosts?page=${page.value}&limit=${limit}`);
+        const response = await axios.get(`${apiBaseUrl}/api/getAllPosts?page=${page.value}&limit=${limit}`);
         const posts = response.data;
 
         if (posts.length > 0) {

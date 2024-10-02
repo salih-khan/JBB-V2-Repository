@@ -9,7 +9,7 @@
 
         <div class="post-meta">
           <p>
-            By: <a :href="`http://localhost:3000/profiles/${user._id}`" target="_blank">{{ user.displayName }} - {{ post.nameId }}</a>
+            By: <a :href="`https://jbb-fullstack.onrender.com/profiles/${user._id}`" target="_blank">{{ user.displayName }} - {{ post.nameId }}</a>
           </p>
           <span class="post-date">{{ formatDate(post.date) }}</span>
         </div>
@@ -71,7 +71,7 @@
         <h4>Recent Posts</h4>
         <ul>
           <li v-for="(recentPost, index) in recentPosts" :key="index" class="recent-post-item">
-            <a :href="`/category/palestine/${recentPost._id}`">{{ recentPost.title }}</a>
+            <a :href="`https://jbb-fullstack.onrender.com/category/palestine/${recentPost._id}`">{{ recentPost.title }}</a>
           </li>
         </ul>
       </div>
@@ -103,11 +103,13 @@ export default {
     const isModalOpen = ref(false); // To manage modal visibility
     const route = useRoute();
 
+    const apiBaseUrl = process.env.VUE_APP_API_URL;
+
     // Fetch an individual post
     const fetchPost = async () => {
       try {
         const { postId } = route.params;
-        const response = await axios.get(`/api/getIndividualPost/${postId}`);
+        const response = await axios.get(`${apiBaseUrl}/api/getIndividualPost/${postId}`);
         const responseData = response.data;
         post.value = responseData.post;
         user.value = responseData.user;
@@ -119,7 +121,7 @@ export default {
     // Fetch recent posts
     const fetchRecentPosts = async () => {
       try {
-        const response = await axios.get(`/api/getAllPosts?page=1&limit=10`);
+        const response = await axios.get(`${apiBaseUrl}/api/getAllPosts?page=1&limit=10`);
         recentPosts.value = response.data; // Set the fetched posts to the recentPosts array
       } catch (error) {
         console.error("Error fetching recent posts:", error);

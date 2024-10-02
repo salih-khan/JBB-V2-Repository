@@ -47,10 +47,12 @@ export default {
     const errorMessage = ref('');
     const bannerImageError = ref('');
     const pfpError = ref('');
+    const apiBaseUrl = process.env.VUE_APP_API_URL;
+
 
     const fetchCurrentUser = async () => {
       try {
-        const response = await axios.get('/api/user');
+        const response = await axios.get('${apiBaseUrl}/api/user');
         const user = response.data;
         displayName.value = user.displayName || '';
         bio.value = user.description || '';
@@ -111,7 +113,7 @@ export default {
       if (pfp.value) formData.append('pfp', pfp.value);
 
       try {
-        const response = await axios.post('/api/updateProfile', formData, {
+        const response = await axios.post('${apiBaseUrl}/api/updateProfile', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
 

@@ -386,11 +386,13 @@ export default {
     const isCurrentUser = ref(false);
     const posts = ref([]); // Reactive state for storing the user's posts
 
+    const apiBaseUrl = process.env.VUE_APP_API_URL;
+
     const showProfileEditorBool = ref(false);
 
     const getAccountInfo = async (id) => {
       try {
-        const response = await axios.get('/api/getAllUsers');
+        const response = await axios.get('${apiBaseUrl}/api/getAllUsers');
         const users = response.data;
         console.log('API Response:', users);
 
@@ -412,7 +414,7 @@ export default {
           console.log('Is Current User: ', isCurrentUser.value);
 
           const postsResponse = await axios.get(
-              `/api/getAllPostsFromUser`,
+              `${apiBaseUrl}/api/getAllPostsFromUser`,
               {
                 params: {
                   nameId: currentUser.nameId,
