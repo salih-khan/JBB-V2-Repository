@@ -6,9 +6,11 @@ export function useAuthValidate() {
   const user = ref(null);
   const router = useRouter();
 
+  const apiBaseUrl = process.env.NODE_ENV === 'production' ? 'https://jbb-fullstack.onrender.com.com' : 'http://localhost:3000';
+
   const fetchUser = async () => {
     try {
-      const response = await fetch('/api/user', {
+      const response = await fetch(`${apiBaseUrl}/api/user`, {
         credentials: 'include'
       });
       if (response.ok) {

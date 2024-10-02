@@ -21,8 +21,10 @@ const startServer = async () => {
 
     const app = express();
 
-    app.use(cors());
-    app.use(helmet({
+    app.use(cors({
+      origin: 'https://jbb-fullstack.onrender.com', // Replace with your frontend domain
+      credentials: true
+    }));    app.use(helmet({
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'", "jbb-fullstack.onrender.com"], // Corrected here
