@@ -24,10 +24,10 @@ router.use((req, res, next) => {
 });
 
 // Route to get the current user
-router.get('/api/user', getUser);
+router.get('https://jbb-fullstack.onrender.com/api/user', getUser);
 
 // Route to check authentication status
-router.get('/api/auth/check-session', (req, res) => {
+router.get('https://jbb-fullstack.onrender.com/api/auth/check-session', (req, res) => {
     if (req.isAuthenticated()) {
         res.send('Authenticated');
     } else {
@@ -36,16 +36,16 @@ router.get('/api/auth/check-session', (req, res) => {
 });
 
 // Route to create a new post
-router.post('/api/newPost', upload.array('images'), newPost);
+router.post('https://jbb-fullstack.onrender.com/api/newPost', upload.array('images'), newPost);
 
 // Route to get all users
-router.get('/api/getAllUsers', getAllUsers);
+router.get('https://jbb-fullstack.onrender.com/api/getAllUsers', getAllUsers);
 
 // Route to get all posts (current month)
-router.get('/api/getAllPosts', getAllPosts);
+router.get('https://jbb-fullstack.onrender.com/api/getAllPosts', getAllPosts);
 
 // Route to update the user's profile
-router.post('/api/updateProfile', 
+router.post('https://jbb-fullstack.onrender.com/api/updateProfile',
     upload.fields([{ name: 'bannerImage' }, { name: 'pfp' }]), 
     (req, res, next) => {
         console.log("Inside upload middleware");
@@ -55,12 +55,12 @@ router.post('/api/updateProfile',
 );
 
 // Route to get all posts from a specific user
-router.get('/api/getAllPostsFromUser', getAllPostsFromUser);
+router.get('https://jbb-fullstack.onrender.com/api/getAllPostsFromUser', getAllPostsFromUser);
 
 //for the /categorypalestine
-router.get('/api/getAllPostsFromCategory', getAllPostsFromCategory);
+router.get('https://jbb-fullstack.onrender.com/api/getAllPostsFromCategory', getAllPostsFromCategory);
 
 //when the user wants to see the info for 1 post alone
-router.get('/api/getIndividualPost/:postId', getIndividualPost);
+router.get('https://jbb-fullstack.onrender.com/api/getIndividualPost/:postId', getIndividualPost);
 
 module.exports = router;
