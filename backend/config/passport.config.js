@@ -2,6 +2,9 @@ const passport = require('passport');
 const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
 const User = require('../models/user.models');
 const { verifyCallbackFunction } = require('../controllers/auth.controllers');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 const AUTH_OPTIONS = {
     clientID: process.env.CLIENT_ID,
