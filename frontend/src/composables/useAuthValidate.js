@@ -9,7 +9,7 @@ export function useAuthValidate() {
 
   const fetchUser = async () => {
     try {
-      const response = await fetch('https://jbb-fullstack.onrender.com/api/user', {
+      const response = await fetch('/api/user', {
         credentials: 'include'
       });
       if (response.ok) {

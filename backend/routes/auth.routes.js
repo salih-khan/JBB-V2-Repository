@@ -7,11 +7,11 @@ const router = express.Router();
 const BASE_URL = process.env.VUE_APP_API_URL || 'http://localhost:3000'; // Fallback to local for development
 const FRONTEND_URL = 'https://jbb-fullstack.onrender.com'; // Frontend URL
 
-router.get('https://jbb-fullstack.onrender.com/auth/google', passport.authenticate('google', {
+router.get('/auth/google', passport.authenticate('google', {
     scope: ['email', 'profile']
 }));
 
-router.get('https://jbb-fullstack.onrender.com/auth/google/callback', passport.authenticate('google', {
+router.get('/auth/google/callback', passport.authenticate('google', {
     failureRedirect: `${FRONTEND_URL}/`, // Redirect to frontend login page on failure
     successRedirect: `${FRONTEND_URL}/`, // Redirect to frontend homepage on success
     session: true // Session management is enabled
@@ -21,7 +21,7 @@ router.get('https://jbb-fullstack.onrender.com/auth/google/callback', passport.a
     console.log("Authenticated user:", req.user); // Log authenticated user
 });
 
-router.get('https://jbb-fullstack.onrender.com/auth/logout', (req, res) => {
+router.get('/auth/logout', (req, res) => {
     req.logout((err) => {
         if (err) {
             return next(err);
@@ -30,11 +30,11 @@ router.get('https://jbb-fullstack.onrender.com/auth/logout', (req, res) => {
     });
 });
 
-router.get('https://jbb-fullstack.onrender.com/secret', checkLoggedIn, (req, res) => {
+router.get('/secret', checkLoggedIn, (req, res) => {
     return res.send("Your personal value is 42!");
 });
 
-router.get('https://jbb-fullstack.onrender.com/failure', (req, res) => {
+router.get('/failure', (req, res) => {
     res.send('Failed to login');
 });
 
