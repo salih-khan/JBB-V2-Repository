@@ -12,7 +12,7 @@ router.get('/auth/google', passport.authenticate('google', {
 }));
 
 router.get('/auth/google/callback', passport.authenticate('google', {
-    failureRedirect: `${FRONTEND_URL}/`, // Redirect to frontend login page on failure
+    failureRedirect: `${FRONTEND_URL}/failure`, // Redirect to frontend login page on failure
     successRedirect: `${FRONTEND_URL}/`, // Redirect to frontend homepage on success
     session: true // Session management is enabled
 }), (req, res) => {
