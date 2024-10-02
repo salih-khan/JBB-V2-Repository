@@ -8,6 +8,10 @@ const path = require('path'); // Import path for serving static files
 const { connectPrimaryDB, connectPostsDB } = require('./config/db.config'); // Adjust the path as needed
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
+const dotenv = require('dotenv');
+
+dotenv.config();
+
 require('./config/passport.config'); // Ensure the passport strategy is loaded
 
 const PORT = process.env.PORT || 3000;
