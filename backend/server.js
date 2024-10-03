@@ -30,7 +30,7 @@ const startServer = async () => {
           defaultSrc: ["'self'", "jbb-fullstack.onrender.com"], // Corrected here
           imgSrc: ["'self'", "data:", "blob:", "*"],
           mediaSrc: ["'self'", "*"], // Allow video sources
-          connectSrc: ["'self'", "https://accounts.google.com", "https://jbb-fullstack.onrender.com.com"]
+          connectSrc: ["'self'", "https://accounts.google.com", "https://jbb-fullstack.onrender.com"] // Include your API URL here
         }
       }
     }));
