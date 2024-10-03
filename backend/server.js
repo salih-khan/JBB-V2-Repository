@@ -24,15 +24,21 @@ const startServer = async () => {
     app.use(cors({
       origin: 'https://jbb-fullstack.onrender.com', // Replace with your frontend domain
       credentials: true
-    }));    app.use(helmet({
+    }));
+
+    // 2. Content Security Policy (CSP) with Helmet
+    app.use(helmet({
       contentSecurityPolicy: {
         directives: {
-          defaultSrc: ["'self'", "jbb-fullstack.onrender.com"], // Corrected here
-          imgSrc: ["'self'", "data:", "blob:", "*"],
-          mediaSrc: ["'self'", "*"], // Allow video sources
-          connectSrc: ["'self'", "https://accounts.google.com", "https://jbb-fullstack.onrender.com"] // Include your API URL here
+          defaultSrc: ["'self'", "https://jbb-fullstack.onrender.com"],  // Allow frontend in production
+          scriptSrc: ["'self'", "https://accounts.google.com"],  // Allow Google for OAuth
+          imgSrc: ["'self'", "data:", "blob:", "*"],  // Allow images from any secure source
+          mediaSrc: ["'self'", "*"],  // Allow media from any source
+          connectSrc: ["'self'", "https://accounts.google.com", "https://jbb-fullstack.onrender.com"],  // Allow API connections
+          frameSrc: ["https://accounts.google.com"],  // Allow Google for OAuth
         }
-      }
+      },
+      crossOriginEmbedderPolicy: false // Disable for broader compatibility
     }));
 
 
