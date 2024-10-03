@@ -54,7 +54,10 @@ const startServer = async () => {
       }),
       cookie: {
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 1000 * 60 * 60 * 24
+        maxAge: 1000 * 60 * 60 * 24,
+        httpOnly: true,  // Prevents client-side JavaScript from accessing cookies
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',  // Cross-origin allowed in production
+
       }
     }));
 
