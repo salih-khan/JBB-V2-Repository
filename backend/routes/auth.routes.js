@@ -9,7 +9,7 @@ router.get('/auth/google', passport.authenticate('google', {
 
 router.get('/auth/google/callback', passport.authenticate('google', {
     failureRedirect: '/failure',
-    successRedirect: '/',
+    // successRedirect: '/',
     session: true
 }), (req, res) => {
     console.log("Google called us back");
