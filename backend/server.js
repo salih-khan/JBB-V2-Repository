@@ -54,11 +54,10 @@ const startServer = async () => {
         client: primaryConnection.client // Use the primary database connection here
       }),
       cookie: {
-        secure: process.env.NODE_ENV === 'production',
+        secure: true,
         maxAge: 1000 * 60 * 60 * 24,
         httpOnly: true,  // Prevents client-side JavaScript from accessing cookies
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',  // Cross-origin allowed in production
-
+        sameSite: 'none', // Allow cross-origin cookies
       }
     }));
 
