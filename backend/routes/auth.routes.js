@@ -15,6 +15,8 @@ router.get('/auth/google/callback', passport.authenticate('google', {
     console.log("Google called us back");
     console.log('Google OAuth success, user:', req.user);  // Check if user is authenticated
     console.log('Session:', req.session);  // Check if session is being created
+    res.redirect('/');  // Redirect to your desired route after successful login
+
 });
 
 router.get('/auth/logout', (req, res) => {
