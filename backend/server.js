@@ -45,7 +45,7 @@ const startServer = async () => {
         client: primaryConnection.client // Use the primary database connection here
       }),
       cookie: {
-        secure: process.env.NODE_ENV === 'production',
+        secure: false,
         maxAge: 1000 * 60 * 60 * 24
       }
     }));
