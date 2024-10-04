@@ -12,6 +12,9 @@ const initializeModels = require('../models/post.models'); // Import model initi
 function getUser(req, res) {
     if (req.isAuthenticated()) {
         console.log("User from server: ", req.user);
+
+        console.log('Incoming request cookies:', req.headers.cookie);
+
         return res.json({
             displayName: req.user.displayName,
             nameId: req.user.nameId,
