@@ -32,7 +32,8 @@ const startServer = async () => {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'", "https://jbb-fullstack.onrender.com"],  // Allow frontend in production
-          scriptSrc: ["'self'", "https://accounts.google.com", "https://static.cloudflareinsights.com"],  // Allow Google for OAuth and Cloudflare Insights
+          scriptSrc: ["'self'", "https://accounts.google.com", "https://static.cloudflareinsights.com"],  // Add Cloudflare Insights and Google for OAuth
+          scriptSrcElem: ["'self'", "https://static.cloudflareinsights.com", "https://accounts.google.com"],  // Allow script elements from specific sources
           imgSrc: ["'self'", "data:", "blob:", "*"],  // Allow images from any secure source
           mediaSrc: ["'self'", "*"],  // Allow media from any source
           connectSrc: ["'self'", "https://accounts.google.com", "https://jbb-fullstack.onrender.com"],  // Allow API connections
@@ -41,7 +42,6 @@ const startServer = async () => {
       },
       crossOriginEmbedderPolicy: false // Disable for broader compatibility
     }));
-
 
     app.use(session({
       secret: process.env.SESSION_SECRET,
