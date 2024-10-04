@@ -11,8 +11,13 @@ export function useAuthValidate() {
   const fetchUser = async () => {
     try {
       const response = await fetch(`${apiBaseUrl}/api/user`, {
-        credentials: 'include'
+        method: 'GET',
+        credentials: 'include', // Ensures cookies are sent with the request
+        headers: {
+          'Content-Type': 'application/json' // Set appropriate headers if needed
+        }
       });
+
       if (response.ok) {
         const userData = await response.json();
         isAuthenticated.value = true;
