@@ -21,17 +21,18 @@ const startServer = async () => {
 
     const app = express();
 
+    // 1. CORS Configuration
     app.use(cors({
       origin: 'https://jbb-fullstack.onrender.com', // Replace with your frontend domain
-      credentials: true
+      credentials: true  // Allow cookies and authentication credentials
     }));
 
-    // 2. Content Security Policy (CSP) with Helmet
+// 2. Content Security Policy (CSP) with Helmet
     app.use(helmet({
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'", "https://jbb-fullstack.onrender.com"],  // Allow frontend in production
-          scriptSrc: ["'self'", "https://accounts.google.com"],  // Allow Google for OAuth
+          scriptSrc: ["'self'", "https://accounts.google.com", "https://static.cloudflareinsights.com"],  // Allow Google for OAuth and Cloudflare Insights
           imgSrc: ["'self'", "data:", "blob:", "*"],  // Allow images from any secure source
           mediaSrc: ["'self'", "*"],  // Allow media from any source
           connectSrc: ["'self'", "https://accounts.google.com", "https://jbb-fullstack.onrender.com"],  // Allow API connections
