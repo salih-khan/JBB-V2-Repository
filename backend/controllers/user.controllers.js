@@ -10,7 +10,7 @@ const initializeModels = require('../models/post.models'); // Import model initi
 
 // Function to get the current user
 function getUser(req, res) {
-    if (req.user) {
+    if (req.isAuthenticated()) {
         console.log("User from server: ", req.user);
         return res.json({
             displayName: req.user.displayName,
@@ -23,9 +23,8 @@ function getUser(req, res) {
             _id: req.user._id
         });
     } else {
-        res.status(401).json({
-            error: 'User not authenticated'
-        });
+        console.error("User not authenticated, returning 401");
+        res.status(401).json({ error: 'User not authenticated' });
     }
 }
 
