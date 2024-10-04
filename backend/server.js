@@ -71,6 +71,13 @@ const startServer = async () => {
     app.use(authRoutes);
     app.use(userRoutes);
 
+    app.get('/debug-session', (req, res) => {
+      res.json({
+        session: req.session,
+        user: req.user,
+      });
+    });
+    
     app.get('*', (req, res) => {
       res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
     });
