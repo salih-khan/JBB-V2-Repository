@@ -54,10 +54,10 @@ const startServer = async () => {
         client: primaryConnection.client // Use the primary database connection here
       }),
       cookie: {
-        secure: true,
+        secure: false,
         maxAge: 1000 * 60 * 60 * 24,
         httpOnly: true,  // Prevents client-side JavaScript from accessing cookies
-        sameSite: 'none', // Allow cross-origin cookies
+        sameSite: 'lax', // Allow cross-origin cookies
       }
     }));
 
