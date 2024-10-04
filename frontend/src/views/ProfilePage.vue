@@ -392,7 +392,7 @@ export default {
 
     const getAccountInfo = async (id) => {
       try {
-        const response = await axios.get('${apiBaseUrl}/api/getAllUsers');
+        const response = await axios.get(`${apiBaseUrl}/api/getAllUsers`);
         const users = response.data;
         console.log('API Response:', users);
 
