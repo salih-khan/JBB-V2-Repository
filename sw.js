@@ -16,3 +16,4 @@ self.addEventListener('fetch', (event) => {
             throw error; // Let the browser handle the error
         })
     );
+});
