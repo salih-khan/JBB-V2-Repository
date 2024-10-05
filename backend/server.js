@@ -21,6 +21,14 @@ const startServer = async () => {
 
     const app = express();
 
+    // 1. Force HTTPS Redirection
+    app.use((req, res, next) => {
+      if (req.secure || req.headers['x-forwarded-proto'] === 'https') {
+        next();  // If HTTPS, continue
+      } else {
+        res.redirect('https://' + req.headers.host + req.url);  // Redirect to HTTPS
+      }
+
     // 1. CORS Configuration
     app.use(cors({
       origin: 'https://jbb-fullstack.onrender.com', // Replace with your frontend domain
@@ -54,12 +62,13 @@ const startServer = async () => {
         client: primaryConnection.client // Use the primary database connection here
       }),
       cookie: {
-        secure: false,
-        maxAge: 1000 * 60 * 60 * 24,
-        httpOnly: true,  // Prevents client-side JavaScript from accessing cookies
-        sameSite: 'lax', // Allow cross-origin cookies
+        secure: true,  // Only send cookies over HTTPS
+        httpOnly: true,  // Prevent client-side access to cookies
+        sameSite: 'none',  // Allow cross-origin cookies (for Google OAuth, etc.)
+        maxAge: 1000 * 60 * 60 * 24,  // Cookie expires after 1 day
       }
     }));
+    app.set('trust proxy', 1);
 
     app.use(passport.initialize());
     app.use(passport.session());
