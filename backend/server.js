@@ -28,7 +28,7 @@ const startServer = async () => {
       } else {
         res.redirect('https://' + req.headers.host + req.url);  // Redirect to HTTPS
       }
-
+    });
     // 1. CORS Configuration
     app.use(cors({
       origin: 'https://jbb-fullstack.onrender.com', // Replace with your frontend domain
