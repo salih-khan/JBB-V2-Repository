@@ -48,9 +48,9 @@ const startServer = async () => {
     app.use(helmet({
       contentSecurityPolicy: {
         directives: {
-          defaultSrc: ["'self'", "https://jbb-fullstack.onrender.com", "https://www.jbb.foundation", "https://jbb.foundation"],  // Allow frontend in production
-          scriptSrc: ["'self'", "https://accounts.google.com", "https://static.cloudflareinsights.com"],  // Add Cloudflare Insights and Google for OAuth
-          scriptSrcElem: ["'self'", "https://static.cloudflareinsights.com", "https://accounts.google.com"],  // Allow script elements from specific sources
+          defaultSrc: ["'self'", "https://jbb-fullstack.onrender.com", "https://www.jbb.foundation", "https://jbb.foundation"],
+          scriptSrc: ["'self'", "https://accounts.google.com", "https://static.cloudflareinsights.com", "https://pagead2.googlesyndication.com"],  // Add the Google Ads domain
+          scriptSrcElem: ["'self'", "https://static.cloudflareinsights.com", "https://accounts.google.com", "https://pagead2.googlesyndication.com"],  // Allow script elements from specific sources
           imgSrc: ["'self'", "data:", "blob:", "*"],  // Allow images from any secure source
           mediaSrc: ["'self'", "*"],  // Allow media from any source
           connectSrc: ["'self'", "https://accounts.google.com", "https://jbb-fullstack.onrender.com", "https://www.jbb.foundation", "https://jbb.foundation"],  // Allow API connections
@@ -59,6 +59,7 @@ const startServer = async () => {
       },
       crossOriginEmbedderPolicy: false // Disable for broader compatibility
     }));
+
 
     // 4. Session Configuration
     app.use(session({
