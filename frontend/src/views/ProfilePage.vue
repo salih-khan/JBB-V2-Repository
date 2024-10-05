@@ -390,7 +390,7 @@ export default {
     const isCurrentUser = ref(false);
     const posts = ref([]); // Reactive state for storing the user's posts
 
-    const apiBaseUrl = 'https://jbb-fullstack.onrender.com';
+    const apiBaseUrl = process.env.VUE_APP_API_URL;
 
     const showProfileEditorBool = ref(false);
 

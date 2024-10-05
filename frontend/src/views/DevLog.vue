@@ -44,15 +44,17 @@ export default defineComponent({
     const currentUpdates = ref([
       {
         id: 1,
-        title: 'Homepage Redesign',
-        date: '2024-09-20',
-        description: 'We redesigned the homepage for a modern look and streamlined navigation.',
+        title: 'jbb.foundation Official setup',
+        date: '2024-10-05',
+        description: 'Hello everyone, the developer here. Journalists Beyond Borders is now at a stage where there is a working ' +
+                     'product available for users to user. Officially this is now in beta testing.',
       },
       {
         id: 2,
-        title: 'Bug Fixes in Contact Form',
-        date: '2024-09-18',
-        description: 'Resolved contact form submission issues across various devices.',
+        title: '"Palestine" currently is the only category',
+        date: '2024-10-05',
+        description: 'This will most certainly change in the near future as the user base grows a wide variety of topics will ' +
+                     'become available. ',
       },
     ]);
 

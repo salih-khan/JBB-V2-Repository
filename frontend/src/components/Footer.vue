@@ -43,7 +43,7 @@
 
     <div class="text-center p-3 bg-dark text-light">
       © 2024 Copyright:
-      <a class="text-light" href="https://jbb-fullstack.onrender.com/">jbb.foundation</a>
+      <a class="text-light" href="https://jbb.foundation/">jbb.foundation</a>
     </div>
   </footer>
 </template>

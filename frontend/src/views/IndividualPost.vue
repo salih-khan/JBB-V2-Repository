@@ -9,7 +9,7 @@
 
         <div class="post-meta">
           <p>
-            By: <a :href="`https://jbb-fullstack.onrender.com/profiles/${user._id}`" target="_blank">{{ user.displayName }} - {{ post.nameId }}</a>
+            By: <a :href="`https://jbb.foundation/profiles/${user._id}`" target="_blank">{{ user.displayName }} - {{ post.nameId }}</a>
           </p>
           <span class="post-date">{{ formatDate(post.date) }}</span>
         </div>
@@ -71,7 +71,7 @@
         <h4>Recent Posts</h4>
         <ul>
           <li v-for="(recentPost, index) in recentPosts" :key="index" class="recent-post-item">
-            <a :href="`https://jbb-fullstack.onrender.com/category/palestine/${recentPost._id}`">{{ recentPost.title }}</a>
+            <a :href="`https://jbb.foundation/category/palestine/${recentPost._id}`">{{ recentPost.title }}</a>
           </li>
         </ul>
       </div>

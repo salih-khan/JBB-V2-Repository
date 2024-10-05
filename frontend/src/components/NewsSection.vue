@@ -13,7 +13,7 @@
                   muted
                   playsinline
                   disablePictureInPicture
-                  controlsList="nodownload noplaybackrate nofullscreen">
+                  controlsList="download noplaybackrate nofullscreen">
               </video>
             </template>
             <template v-else>
