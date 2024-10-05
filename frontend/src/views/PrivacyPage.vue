@@ -32,7 +32,7 @@
 
       <h2>Contact Us</h2>
       <p>
-        If you have any questions about our Privacy Policy, please feel free to contact us through our website or email us at support@example.com.
+        If you have any questions about our Privacy Policy, please feel free to contact us through our website or email us at salihkhan1701@gmail.com
       </p>
 
       <p class="text-center mt-4">

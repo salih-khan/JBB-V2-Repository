@@ -6,7 +6,7 @@
         <div class="invite-details">
             <h2>Join Our Official Discord Community</h2>
             <p>Connect with us directly and share your ideas or suggestions for improvement. If you'd like to upgrade your account to unlock additional features, such as posting with year-only or period-specific tags, you can request it here. Our Discord server is also the best place to make queries and contact our team for any support you need.</p>
-            <a href="https://discord.gg/pg9rCfSb" class="discord-button" target="_blank">Join Now</a>
+            <a href="https://discord.gg/EvExu6B9zk" class="discord-button" target="_blank">Join Now</a>
         </div>
     </div>
 </template>

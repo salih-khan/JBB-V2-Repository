@@ -10,10 +10,14 @@ self.addEventListener('activate', (event) => {
 
 // Fetch event listener
 self.addEventListener('fetch', (event) => {
-    event.respondWith(
-        fetch(event.request).catch((error) => {
-            console.error('Fetching failed:', error);
-            throw error; // Let the browser handle the error
-        })
-    );
+    // Only respond to requests for your domain
+    if (event.request.url.includes('jbb.foundation')) {
+        event.respondWith(
+            fetch(event.request).catch((error) => {
+                console.error('Fetching failed:', error);
+                // Optionally return a fallback response or cache hit
+            })
+        );
+    }
+    // For other requests (like Google Ads), fall back to the network
 });
