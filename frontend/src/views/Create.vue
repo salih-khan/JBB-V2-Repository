@@ -34,11 +34,7 @@
 
           <h3 class="form-main-text">Description</h3>
           <div class="input-wrapper">
-            <textarea
-              placeholder="Enter description"
-              class="description-input"
-              v-model="postDescriptionData"
-            ></textarea>
+            <div ref="quillEditor" class="description-editor"></div>
           </div>
 
           <h3 class="form-main-text">Date Information</h3>
@@ -144,232 +140,256 @@ import { ref, onMounted, nextTick } from 'vue';
 import { useAuthValidate } from '../composables/useAuthValidate';
 import Header from '@/components/Header.vue';
 import Footer from '@/components/Footer.vue';
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
 
-import LoadingSpinner from '@/components/LoadingSpinner.vue'
+import Quill from 'quill'; // Import Quill
+import 'quill/dist/quill.snow.css'; // Import Quill CSS
 
 export default {
-  components: {
-    Header,
-    TermsAndConditions,
-    LoadingSpinner,
-    Footer
-  },
-  setup() {
-    //for the spinner
-    const isLoading = ref(false);
-    const apiBaseUrl = process.env.VUE_APP_API_URL;
+components: {
+Header,
+TermsAndConditions,
+LoadingSpinner,
+Footer
+},
+setup() {
+//for the spinner
+const isLoading = ref(false);
+const apiBaseUrl = process.env.VUE_APP_API_URL;
 
-    const showTermsAndConditions = ref(false);
+const showTermsAndConditions = ref(false);
+const { isAuthenticated, fetchUser } = useAuthValidate();
+const files = ref([]);
+const dateInfo = ref('');
+const addNSFWTag = ref(false);
+const isChecked = ref(false);  // Track checkbox state
 
-    const { isAuthenticated, fetchUser } = useAuthValidate();
-    const files = ref([]);
-    const dateInfo = ref('');
-    const addNSFWTag = ref(false);
-    const isChecked = ref(false);  // Track checkbox state
+const postTitleData = ref('');
+const postDescriptionData = ref(''); // Data to store Quill content
 
-    const postTitleData = ref('');
-    const postDescriptionData = ref('');
+const proofs = ref([
+{
+title: '',
+source: '',
+description: '',
+}
+]);
 
-    const proofs = ref([
-      {
-        title: '',
-        source: '',
-        description: '',
-      }
-    ]);
+const quillEditor = ref(null); // Reference to Quill editor instance
 
-    const handleFileChange = (event) => {
-      const allowedTypes = [
-        'image/jpeg', 'image/png', 'image/gif', 'image/webp',
-        'image/heic', 'image/bmp', 'image/tiff', 'image/svg+xml',
-        'video/mp4', 'video/ogg', 'video/webm', 'video/quicktime',
-        'video/x-msvideo', 'video/x-matroska'
-      ];
-      const maxSize = 30 * 1024 * 1024; // 30 MB
+// Quill editor initialization inside onMounted
+onMounted(() => {
+quillEditor.value = new Quill('.description-editor', {
+theme: 'snow',  // Quill theme
+placeholder: 'Enter description...',
+modules: {
+toolbar: [
+[{ 'header': [1, 2, false] }],
+['bold', 'italic', 'underline'],
+[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+['link', 'image'],
+['clean'] // Clear formatting
+]
+}
+});
 
-      for (let file of event.target.files) {
-        if (allowedTypes.includes(file.type)) {
-          if (file.size <= maxSize) {
-            files.value.push(file);
-          } else {
-            alert(`File ${file.name} exceeds the maximum size of 16 MB.`);
-          }
-        } else {
-          alert(`File type ${file.type} is not allowed.`);
-        }
-      }
-    };
+// Listen for Quill content changes
+quillEditor.value.on('text-change', () => {
+postDescriptionData.value = quillEditor.value.root.innerHTML;
+});
+});
 
+const handleFileChange = (event) => {
+const allowedTypes = [
+'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+'image/heic', 'image/bmp', 'image/tiff', 'image/svg+xml',
+'video/mp4', 'video/ogg', 'video/webm', 'video/quicktime',
+'video/x-msvideo', 'video/x-matroska'
+];
+const maxSize = 30 * 1024 * 1024; // 30 MB
 
-    const removeFile = (index) => {
-      files.value.splice(index, 1);
-    };
-
-    const isImage = (file) => file.type.startsWith('image/');
-    const isVideo = (file) => file.type.startsWith('video/');
-    const getImageURL = (file) => URL.createObjectURL(file);
-
-    const handleKeyPress = (event, field, index) => {
-      if (field === 'title') {
-        if (event.key === 'Enter') {
-          nextTick(() => {
-            if (postTitleData.value.trim() !== '') {
-            } else {
-              alert('Title cannot be empty.');
-            }
-          });
-        }
-      } else if (field === 'description') {
-        if (event.key === 'Enter') {
-          nextTick(() => {
-            if (postDescriptionData.value.trim() !== '') {
-            } else {
-              alert('Description cannot be empty.');
-            }
-          });
-        }
-      } else {
-        if (!proofs.value[index]) {
-          proofs.value[index] = {
-            title: '',
-            source: '',
-            description: ''
-          };
-        }
-
-        if (event.key === 'Enter') {
-          nextTick(() => {
-            const proof = proofs.value[index];
-            if (!proof) {
-              console.error(`Proof object at index ${index} does not exist.`);
-              return;
-            }
-
-            if (field === 'proofTitle') {
-              if (proof.title.trim() !== '') {
-              } else {
-                alert('Title cannot be empty.');
-              }
-            } else if (field === 'proofSource') {
-              if (proof.source.trim() !== '') {
-              } else {
-                alert('Source cannot be empty.');
-              }
-            } else if (field === 'proofDescription') {
-              if (proof.description.trim() !== '') {
-              } else {
-                alert('Description cannot be empty.');
-              }
-            }
-          });
-        }
-      }
-    };
-
-    const addMoreProofs = () => {
-      proofs.value.push({
-        title: '',
-        source: '',
-        description: ''
-      });
-    };
-
-    const removeLastProof = () => {
-      if (proofs.value.length > 1) {
-        proofs.value.pop();
-      }
-    };
-
-    const openTACModal = () => {
-      showTermsAndConditions.value = true;
-      console.log("Being lcikced")
-
-    };
-    const closeTACModal = () => {
-      showTermsAndConditions.value = false;
-    };
-
-
-    const submitPost = async () => {
-      if (!isChecked.value) {
-        alert('You must agree to the terms and conditions before submitting.');
-        return;
-      }
-
-      // Validate proof entries
-      for (const proof of proofs.value) {
-        if (!proof.title || !proof.source || !proof.description) {
-          alert('All proof fields must be filled.');
-          return;
-        }
-      }
-
-      isLoading.value = true; // Set loading to true before submission
-
-      const formData = new FormData();
-      formData.append('title', postTitleData.value);
-      formData.append('description', postDescriptionData.value);
-      formData.append('date', dateInfo.value);
-
-      proofs.value.forEach((proof, index) => {
-        formData.append(`proofs[${index}][title]`, proof.title);
-        formData.append(`proofs[${index}][source]`, proof.source);
-        formData.append(`proofs[${index}][description]`, proof.description);
-      });
-
-      files.value.forEach((file) => {
-        formData.append('images', file);
-      });
-
-      formData.append('nsfw', addNSFWTag.value);
-
-      try {
-        const response = await fetch(`${apiBaseUrl}/api/newPost`, {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (response.ok) {
-          isLoading.value = false; // Ensure loading is false after submission
-          alert('Post submitted successfully!');
-          window.location = '/';
-        } else {
-          alert('Failed to submit post');
-        }
-      } catch (error) {
-        console.error('Error submitting the post:', error);
-      }
-    };
-
-    onMounted(async () => {
-      await fetchUser(); // Call to fetch user data
-    });
-
-    return {
-      showTermsAndConditions,
-      files,
-      dateInfo,
-      addNSFWTag,
-      postTitleData,
-      postDescriptionData,
-      proofs,
-      handleFileChange,
-      removeFile,
-      isImage,
-      isVideo,
-      getImageURL,
-      handleKeyPress,
-      addMoreProofs,
-      removeLastProof,
-      openTACModal,
-      closeTACModal,
-      submitPost,
-      isChecked,
-      isLoading,
-      isAuthenticated
-    };
-  }
+for (let file of event.target.files) {
+if (allowedTypes.includes(file.type)) {
+if (file.size <= maxSize) {
+files.value.push(file);
+} else {
+alert(`File ${file.name} exceeds the maximum size of 16 MB.`);
+}
+} else {
+alert(`File type ${file.type} is not allowed.`);
+}
+}
 };
+
+const removeFile = (index) => {
+files.value.splice(index, 1);
+};
+
+const isImage = (file) => file.type.startsWith('image/');
+const isVideo = (file) => file.type.startsWith('video/');
+const getImageURL = (file) => URL.createObjectURL(file);
+
+const handleKeyPress = (event, field, index) => {
+if (field === 'title') {
+if (event.key === 'Enter') {
+nextTick(() => {
+if (postTitleData.value.trim() !== '') {
+} else {
+alert('Title cannot be empty.');
+}
+});
+}
+} else if (field === 'description') {
+if (event.key === 'Enter') {
+nextTick(() => {
+if (postDescriptionData.value.trim() !== '') {
+} else {
+alert('Description cannot be empty.');
+}
+});
+}
+} else {
+if (!proofs.value[index]) {
+proofs.value[index] = {
+title: '',
+source: '',
+description: ''
+};
+}
+
+if (event.key === 'Enter') {
+nextTick(() => {
+const proof = proofs.value[index];
+if (!proof) {
+console.error(`Proof object at index ${index} does not exist.`);
+return;
+}
+
+if (field === 'proofTitle') {
+if (proof.title.trim() !== '') {
+} else {
+alert('Title cannot be empty.');
+}
+} else if (field === 'proofSource') {
+if (proof.source.trim() !== '') {
+} else {
+alert('Source cannot be empty.');
+}
+} else if (field === 'proofDescription') {
+if (proof.description.trim() !== '') {
+} else {
+alert('Description cannot be empty.');
+}
+}
+});
+}
+}
+};
+
+const addMoreProofs = () => {
+proofs.value.push({
+title: '',
+source: '',
+description: ''
+});
+};
+
+const removeLastProof = () => {
+if (proofs.value.length > 1) {
+proofs.value.pop();
+}
+};
+
+const openTACModal = () => {
+showTermsAndConditions.value = true;
+};
+const closeTACModal = () => {
+showTermsAndConditions.value = false;
+};
+
+const submitPost = async () => {
+if (!isChecked.value) {
+alert('You must agree to the terms and conditions before submitting.');
+return;
+}
+
+// Validate proof entries
+for (const proof of proofs.value) {
+if (!proof.title || !proof.source || !proof.description) {
+alert('All proof fields must be filled.');
+return;
+}
+}
+
+isLoading.value = true; // Set loading to true before submission
+
+const formData = new FormData();
+formData.append('title', postTitleData.value);
+formData.append('description', postDescriptionData.value); // Quill content
+
+formData.append('date', dateInfo.value);
+
+proofs.value.forEach((proof, index) => {
+formData.append(`proofs[${index}][title]`, proof.title);
+formData.append(`proofs[${index}][source]`, proof.source);
+formData.append(`proofs[${index}][description]`, proof.description);
+});
+
+files.value.forEach((file) => {
+formData.append('images', file);
+});
+
+formData.append('nsfw', addNSFWTag.value);
+
+try {
+const response = await fetch(`${apiBaseUrl}/api/newPost`, {
+method: 'POST',
+body: formData,
+});
+
+if (response.ok) {
+isLoading.value = false; // Ensure loading is false after submission
+alert('Post submitted successfully!');
+window.location = '/';
+} else {
+alert('Failed to submit post');
+}
+} catch (error) {
+console.error('Error submitting the post:', error);
+}
+};
+
+onMounted(async () => {
+await fetchUser(); // Call to fetch user data
+});
+
+return {
+showTermsAndConditions,
+files,
+dateInfo,
+addNSFWTag,
+postTitleData,
+postDescriptionData,
+proofs,
+handleFileChange,
+removeFile,
+isImage,
+isVideo,
+getImageURL,
+handleKeyPress,
+addMoreProofs,
+removeLastProof,
+openTACModal,
+closeTACModal,
+submitPost,
+isChecked,
+isLoading,
+isAuthenticated,
+quillEditor
+};
+}
+};
+
 </script>
 
 
@@ -416,6 +436,14 @@ export default {
     font-size: 1.5em;
     margin-bottom: 10px;
     color: #333;
+}
+.description-editor {
+  min-height: 200px;
+  max-height: 400px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: #fff;
 }
 
 .column input,
