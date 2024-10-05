@@ -8,6 +8,7 @@ import Category from '../views/Category.vue'
 import IndividualPost from '../views/IndividualPost.vue'
 import LoadingTest from '../views/LoadingTest.vue'
 import DevLog from '../views/DevLog.vue'
+import PrivacyPage from '../views/PrivacyPage.vue'
 
 const routes = [
   {
@@ -55,6 +56,11 @@ const routes = [
     path: '/development',
     name: 'Development',
     component: DevLog,
+  },
+  {
+    path: '/privacy',
+    name: 'Privacy',
+    component: PrivacyPage,
   }
 ];
 

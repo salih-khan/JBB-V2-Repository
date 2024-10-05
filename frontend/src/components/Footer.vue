@@ -34,6 +34,9 @@
               <a href="/development" class="text-dark">Dev Log</a>
             </li>
             <li>
+              <a to="/privacy-policy">Privacy Policy</a>
+            </li>
+            <li>
               <a href="https://discord.com/invite/pg9rCfSb" target="_blank" class="text-dark">Official Discord</a>
             </li>
           </ul>
