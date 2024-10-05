@@ -6,7 +6,7 @@ export function useAuthValidate() {
   const user = ref(null);
   const router = useRouter();
 
-  const apiBaseUrl = 'https://jbb-fullstack.onrender.com';
+  const apiBaseUrl = 'https://jbb.foundation';
 
   const fetchUser = async () => {
     try {

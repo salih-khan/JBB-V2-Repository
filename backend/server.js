@@ -48,12 +48,12 @@ const startServer = async () => {
     app.use(helmet({
       contentSecurityPolicy: {
         directives: {
-          defaultSrc: ["'self'", "https://jbb-fullstack.onrender.com"],  // Allow frontend in production
+          defaultSrc: ["'self'", "https://jbb-fullstack.onrender.com", "https://www.jbb.foundation", "https://jbb.foundation"],  // Allow frontend in production
           scriptSrc: ["'self'", "https://accounts.google.com", "https://static.cloudflareinsights.com"],  // Add Cloudflare Insights and Google for OAuth
           scriptSrcElem: ["'self'", "https://static.cloudflareinsights.com", "https://accounts.google.com"],  // Allow script elements from specific sources
           imgSrc: ["'self'", "data:", "blob:", "*"],  // Allow images from any secure source
           mediaSrc: ["'self'", "*"],  // Allow media from any source
-          connectSrc: ["'self'", "https://accounts.google.com", "https://jbb-fullstack.onrender.com"],  // Allow API connections
+          connectSrc: ["'self'", "https://accounts.google.com", "https://jbb-fullstack.onrender.com", "https://www.jbb.foundation", "https://jbb.foundation"],  // Allow API connections
           frameSrc: ["https://accounts.google.com"],  // Allow Google for OAuth
         }
       },
