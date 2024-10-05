@@ -21,21 +21,30 @@ const startServer = async () => {
 
     const app = express();
 
-    // 1. Force HTTPS Redirection
+    // 1. Force Redirects
     app.use((req, res, next) => {
-      if (req.secure || req.headers['x-forwarded-proto'] === 'https') {
-        next();  // If HTTPS, continue
-      } else {
-        res.redirect('https://' + req.headers.host + req.url);  // Redirect to HTTPS
+      // Redirect www to non-www
+      if (req.headers.host === 'www.jbb.foundation') {
+        return res.redirect(301, `https://jbb.foundation${req.url}`);
       }
+      // Redirect HTTP to HTTPS
+      if (!req.secure && req.headers['x-forwarded-proto'] !== 'https') {
+        return res.redirect(`https://${req.headers.host}${req.url}`);
+      }
+      // Redirect jbb-fullstack.onrender.com to jbb.foundation
+      if (req.headers.host === 'jbb-fullstack.onrender.com') {
+        return res.redirect(301, `https://jbb.foundation${req.url}`);
+      }
+      next();  // If all conditions fail, continue
     });
-    // 1. CORS Configuration
+
+    // 2. CORS Configuration
     app.use(cors({
       origin: 'https://jbb-fullstack.onrender.com', // Replace with your frontend domain
       credentials: true  // Allow cookies and authentication credentials
     }));
 
-// 2. Content Security Policy (CSP) with Helmet
+    // 3. Content Security Policy (CSP) with Helmet
     app.use(helmet({
       contentSecurityPolicy: {
         directives: {
@@ -51,6 +60,7 @@ const startServer = async () => {
       crossOriginEmbedderPolicy: false // Disable for broader compatibility
     }));
 
+    // 4. Session Configuration
     app.use(session({
       secret: process.env.SESSION_SECRET,
       resave: true,
@@ -68,18 +78,25 @@ const startServer = async () => {
         maxAge: 1000 * 60 * 60 * 24,  // Cookie expires after 1 day
       }
     }));
+
+    // 5. Trust Proxy for Cloudflare or Render
     app.set('trust proxy', 1);
 
+    // 6. Passport Initialization
     app.use(passport.initialize());
     app.use(passport.session());
+
+    // 7. Serve Static Files
     app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
+    // 8. Routes
     const authRoutes = require('./routes/auth.routes');
     const userRoutes = require('./routes/user.routes');
 
     app.use(authRoutes);
     app.use(userRoutes);
 
+    // Debug Session Route
     app.get('/debug-session', (req, res) => {
       res.json({
         session: req.session,
@@ -87,19 +104,15 @@ const startServer = async () => {
       });
     });
 
+    // Fallback Route for Frontend
     app.get('*', (req, res) => {
       res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
     });
 
-    app.listen(process.env.PORT || 3000, () => {
+    // Start the Server
+    app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
-
-
-
-    // Example usage
-    // const newPost = new Post({ title: 'Sample', description: 'Description', date: new Date() });
-    // await newPost.save();
 
     return { postsDbConnection, Post };  // Return the posts connection and model
   } catch (error) {
