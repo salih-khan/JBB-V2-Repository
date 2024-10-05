@@ -7,8 +7,6 @@ const connectPrimaryDB = async () => {
   if (primaryConnection) return primaryConnection;
   try {
     primaryConnection = await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
       serverSelectionTimeoutMS: 5000,
       dbName: 'Accounts'
     });
