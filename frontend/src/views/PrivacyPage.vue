@@ -1,4 +1,7 @@
 <template>
+  <div class="container-fluid">
+    <Header />
+
   <div class="container mt-5">
     <h1 class="text-center">Privacy Policy</h1>
 
@@ -37,11 +40,22 @@
       </p>
     </div>
   </div>
+
+    <Footer />
+  </div>
+
 </template>
 
 <script>
+import Header from '@/components/Header.vue'
+import Footer from '@/components/Footer.vue'
+
 export default {
   name: "PrivacyPolicy",
+  components:{
+    Header,
+    Footer
+  }
 };
 </script>
 

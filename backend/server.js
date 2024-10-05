@@ -39,8 +39,9 @@ const startServer = async () => {
     });
 
     // 2. CORS Configuration
+    // CORS Configuration
     app.use(cors({
-      origin: 'https://jbb-fullstack.onrender.com', // Replace with your frontend domain
+      origin: 'https://jbb.foundation', // Allow only this domain
       credentials: true  // Allow cookies and authentication credentials
     }));
 
