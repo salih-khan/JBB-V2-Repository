@@ -246,6 +246,10 @@
   z-index: 2;
 }
 
+.post-card:hover{
+  cursor:pointer;
+}
+
 .post-description {
   font-size: 1rem;
   color: #fff;
@@ -483,3 +487,5 @@ export default {
   },
 };
 </script>
+
+

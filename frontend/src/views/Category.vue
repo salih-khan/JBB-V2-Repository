@@ -189,6 +189,9 @@ export default {
   font-size: 0.8rem;
 }
 
+.post-card:hover{
+  cursor: pointer;
+}
 .all-posts{
   margin-left: 1rem;
 }

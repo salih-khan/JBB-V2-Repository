@@ -133,6 +133,9 @@ export default {
   text-align: left;
 }
 
+.card:hover{
+  cursor: pointer;
+}
 .card-text {
   height: 5em; /* Fixed height for description */
   overflow: hidden;

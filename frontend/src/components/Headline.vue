@@ -106,11 +106,29 @@ export default {
 </script>
 
 <style scoped>
+<style scoped>
 .card {
   border: none;
   border-radius: 4px;
   text-align: left;
-  margin: 2rem;
+  margin: 2rem; /* general margin for larger screens */
+}
+
+.card:hover{
+  cursor: pointer;
+}
+
+/* Ensure no padding/margin gap on mobile */
+@media (max-width: 576px) {
+  .card {
+    margin: 0.5rem; /* Reduce margin on smaller screens */
+  }
+  .headline {
+    padding: 0.5rem; /* Adjust padding on mobile */
+  }
+  .col-md-6 {
+    padding: 0; /* Remove padding between columns on mobile */
+  }
 }
 
 .img-fluid, .video-fluid {
@@ -121,6 +139,12 @@ export default {
 .medium-img, .medium-video {
   width: 100%;
   max-height: 300px;
+}
+
+@media (max-width: 576px) {
+  .medium-img, .medium-video {
+    max-height: 200px; /* Reduce the height on mobile for better fit */
+  }
 }
 
 .card-body {
@@ -134,6 +158,7 @@ export default {
 .headline {
   margin: auto;
   max-width: 1250px;
+  padding: 1rem;
 }
 
 .icons {
@@ -145,4 +170,12 @@ export default {
   font-size: 0.8rem;
   z-index: 1; /* Make sure proofs are above other content */
 }
+
+/* Responsive tweaks */
+@media (max-width: 576px) {
+  .icons {
+    font-size: 0.7rem; /* Reduce icon size on smaller screens */
+  }
+}
 </style>
+
