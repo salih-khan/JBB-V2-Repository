@@ -32,8 +32,8 @@
             />
           </div>
 
-          <h3 class="form-main-text">Description</h3>
-          <div class="input-wrapper">
+          <h3 class="form-main-text desc">Description</h3>
+          <div class="desc-input">
             <div ref="quillEditor" class="description-editor"></div>
           </div>
 
@@ -437,6 +437,9 @@ quillEditor
     margin-bottom: 10px;
     color: #333;
 }
+
+
+
 .description-editor {
   min-height: 200px;
   max-height: 400px;
@@ -445,6 +448,7 @@ quillEditor
   padding: 10px;
   background-color: #fff;
 }
+
 
 .column input,
 .column textarea {
