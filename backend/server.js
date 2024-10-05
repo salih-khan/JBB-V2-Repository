@@ -45,22 +45,38 @@ const startServer = async () => {
       credentials: true  // Allow cookies and authentication credentials
     }));
 
-    // 3. Content Security Policy (CSP) with Helmet
+// 3. Content Security Policy (CSP) with Helmet
     app.use(helmet({
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'", "https://jbb-fullstack.onrender.com", "https://www.jbb.foundation", "https://jbb.foundation"],
-          scriptSrc: ["'self'", "https://accounts.google.com", "https://static.cloudflareinsights.com", "https://pagead2.googlesyndication.com"],  // Add the Google Ads domain
-          scriptSrcElem: ["'self'", "https://static.cloudflareinsights.com", "https://accounts.google.com", "https://pagead2.googlesyndication.com"],  // Allow script elements from specific sources
-          imgSrc: ["'self'", "data:", "blob:", "*"],  // Allow images from any secure source
-          mediaSrc: ["'self'", "*"],  // Allow media from any source
-          connectSrc: ["'self'", "https://accounts.google.com", "https://jbb-fullstack.onrender.com", "https://www.jbb.foundation", "https://jbb.foundation"],  // Allow API connections
-          frameSrc: ["https://accounts.google.com"],  // Allow Google for OAuth
+          scriptSrc: [
+            "'self'",
+            "https://accounts.google.com",
+            "https://static.cloudflareinsights.com",
+            "https://pagead2.googlesyndication.com" // Add the Google Ads domain
+          ],
+          scriptSrcElem: [
+            "'self'",
+            "https://static.cloudflareinsights.com",
+            "https://accounts.google.com",
+            "https://pagead2.googlesyndication.com" // Add Google Ads domain here too
+          ],
+          imgSrc: ["'self'", "data:", "blob:", "*"],
+          mediaSrc: ["'self'", "*"],
+          connectSrc: [
+            "'self'",
+            "https://accounts.google.com",
+            "https://jbb-fullstack.onrender.com",
+            "https://www.jbb.foundation",
+            "https://jbb.foundation",
+            "https://static.cloudflareinsights.com" // Ensure this is allowed for connections
+          ],
+          frameSrc: ["https://accounts.google.com"],
         }
       },
       crossOriginEmbedderPolicy: false // Disable for broader compatibility
     }));
-
 
     // 4. Session Configuration
     app.use(session({
