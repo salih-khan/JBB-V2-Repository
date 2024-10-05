@@ -33,7 +33,7 @@
           </div>
 
           <h3 class="form-main-text desc">Description</h3>
-          <div class="desc-input">
+          <div class="input-wrapper">
             <div ref="quillEditor" class="description-editor"></div>
           </div>
 
@@ -678,7 +678,7 @@ quillEditor
 
 /* Wrapper to ensure proper layout */
 .input-wrapper {
-    display: flex;
+    display: block;
     align-items: center;
 }
 
