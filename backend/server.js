@@ -54,13 +54,19 @@ const startServer = async () => {
             "'self'",
             "https://accounts.google.com",
             "https://static.cloudflareinsights.com",
-            "https://pagead2.googlesyndication.com" // Add the Google Ads domain
+            "https://pagead2.googlesyndication.com", // Google Ads
+            "https://unpkg.com/quill/" // Add Quill CDN for scripts
           ],
           scriptSrcElem: [
             "'self'",
             "https://static.cloudflareinsights.com",
             "https://accounts.google.com",
-            "https://pagead2.googlesyndication.com" // Add Google Ads domain here too
+            "https://pagead2.googlesyndication.com", // Google Ads
+            "https://unpkg.com/quill/" // Add Quill CDN for script elements
+          ],
+          styleSrc: [
+            "'self'",
+            "https://unpkg.com/quill/" // Add Quill CDN for styles
           ],
           imgSrc: ["'self'", "data:", "blob:", "*"],
           mediaSrc: ["'self'", "*"],
@@ -70,13 +76,14 @@ const startServer = async () => {
             "https://jbb-fullstack.onrender.com",
             "https://www.jbb.foundation",
             "https://jbb.foundation",
-            "https://static.cloudflareinsights.com" // Ensure this is allowed for connections
+            "https://static.cloudflareinsights.com" // Allow for connections
           ],
           frameSrc: ["https://accounts.google.com"],
         }
       },
       crossOriginEmbedderPolicy: false // Disable for broader compatibility
     }));
+
 
     // 4. Session Configuration
     app.use(session({

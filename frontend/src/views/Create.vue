@@ -1,5 +1,5 @@
 <template>
-  <div class="create" v-if="isAuthenticated">
+  <div class="create" v-if="true">
     <Header />
 
     <div class="create-inner">
@@ -177,10 +177,10 @@ export default {
 
     const quillEditor = ref(null); // Reference to Quill editor instance
 
-    // Quill editor initialization inside onMounted
     onMounted(() => {
       nextTick(() => {
-        const editorElement = quillEditor.value; // Use the `ref` directly
+        console.log("Checking ref:", quillEditor.value);  // Add this for debugging
+        const editorElement = quillEditor.value;
         if (editorElement) {
           quillEditor.value = new Quill(editorElement, {
             theme: 'snow',
