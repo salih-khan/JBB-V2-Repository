@@ -177,13 +177,14 @@ export default {
 
     const quillEditor = ref(null); // Reference to Quill editor instance
 
-    onMounted(() => {
-      nextTick(() => {
-        console.log("Checking ref:", quillEditor.value);  // Add this for debugging
-        const editorElement = quillEditor.value;
-        if (editorElement) {
-          quillEditor.value = new Quill(editorElement, {
-            theme: 'snow',
+    onMounted(async() => {
+      onMounted(async () => {
+        await fetchUser();
+
+        if (isAuthenticated.value) {
+          // Initialize Quill editor only if the user is authenticated
+          quillEditor.value = new Quill('.description-editor', {
+            theme: 'snow',  // Quill theme
             placeholder: 'Enter description...',
             modules: {
               toolbar: [
@@ -191,7 +192,7 @@ export default {
                 ['bold', 'italic', 'underline'],
                 [{ 'list': 'ordered'}, { 'list': 'bullet' }],
                 ['link', 'image'],
-                ['clean']
+                ['clean'] // Clear formatting
               ]
             }
           });
@@ -201,10 +202,10 @@ export default {
             postDescriptionData.value = quillEditor.value.root.innerHTML;
           });
         } else {
-          console.error('Quill container not found');
+          console.error('User is not authenticated, Quill editor not initialized');
         }
       });
-    });
+
 
 
     const handleFileChange = (event) => {
