@@ -141,6 +141,7 @@ import { useAuthValidate } from '../composables/useAuthValidate';
 import Header from '@/components/Header.vue';
 import Footer from '@/components/Footer.vue';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
+import { useRouter } from 'vue-router'
 
 import Quill from 'quill'; // Import Quill
 import 'quill/dist/quill.snow.css'; // Import Quill CSS
@@ -167,6 +168,9 @@ export default {
     const postTitleData = ref('');
     const postDescriptionData = ref(''); // Data to store Quill content
 
+    const router = useRouter();
+
+
     const proofs = ref([
       {
         title: '',
@@ -177,9 +181,21 @@ export default {
 
     const quillEditor = ref(null); // Reference to Quill editor instance
 
-    onMounted(async() => {
       onMounted(async () => {
-        await fetchUser();
+
+        //check if the user is logged in
+        //if not then return to home
+        await fetchUser()
+            .then(() => {
+              if(isAuthenticated){
+                return;
+              }else{
+                router.push('/');
+              }
+            })
+            .catch((error) => {
+              console.log("Error fetching the user in Create.vue: ", error);
+            })
 
         if (isAuthenticated.value) {
           // Initialize Quill editor only if the user is authenticated
@@ -205,7 +221,6 @@ export default {
           console.error('User is not authenticated, Quill editor not initialized');
         }
       });
-    });
 
 
     const handleFileChange = (event) => {
