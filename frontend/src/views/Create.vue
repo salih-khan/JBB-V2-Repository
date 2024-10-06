@@ -179,25 +179,33 @@ export default {
 
     // Quill editor initialization inside onMounted
     onMounted(() => {
-      quillEditor.value = new Quill('.description-editor', {
-        theme: 'snow',  // Quill theme
-        placeholder: 'Enter description...',
-        modules: {
-          toolbar: [
-            [{ 'header': [1, 2, false] }],
-            ['bold', 'italic', 'underline'],
-            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-            ['link', 'image'],
-            ['clean'] // Clear formatting
-          ]
+      nextTick(() => {
+        const editorElement = quillEditor.value; // Use the `ref` directly
+        if (editorElement) {
+          quillEditor.value = new Quill(editorElement, {
+            theme: 'snow',
+            placeholder: 'Enter description...',
+            modules: {
+              toolbar: [
+                [{ 'header': [1, 2, false] }],
+                ['bold', 'italic', 'underline'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                ['link', 'image'],
+                ['clean']
+              ]
+            }
+          });
+
+          // Listen for Quill content changes
+          quillEditor.value.on('text-change', () => {
+            postDescriptionData.value = quillEditor.value.root.innerHTML;
+          });
+        } else {
+          console.error('Quill container not found');
         }
       });
-
-      // Listen for Quill content changes
-      quillEditor.value.on('text-change', () => {
-        postDescriptionData.value = quillEditor.value.root.innerHTML;
-      });
     });
+
 
     const handleFileChange = (event) => {
       const allowedTypes = [
