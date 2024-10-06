@@ -335,8 +335,11 @@ export default {
 
       formData.append('nsfw', addNSFWTag.value);
 
-      videoLinks.value.forEach((link, index) => {
-        formData.append(`videoLinks[${index}][url]`, link.url);
+      // Map video links to an array of URLs
+      const videoLinksArray = videoLinks.value.map(link => link.url);  // <-- Add this line here
+
+      videoLinksArray.forEach((url, index) => {
+        formData.append(`videoLinks[${index}][url]`, url); // Append each URL to FormData
       });
 
       try {
@@ -360,6 +363,7 @@ export default {
         isLoading.value = false;
       }
     };
+
 
     return {
       showTermsAndConditions,

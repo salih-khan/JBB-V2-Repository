@@ -192,7 +192,7 @@ const newPost = async (req, res) => {
             videoLinks
         } = req.body;
 
-        const videoLinksArray = JSON.parse(videoLinks);
+        const videoLinksArray = Array.isArray(videoLinks) ? videoLinks : JSON.parse(videoLinks); // Ensure it's an array
 
         const files = req.files;
         const nameId = req.user.nameId; // Get the user's nameId
@@ -203,13 +203,19 @@ const newPost = async (req, res) => {
 
         // Check if proofs are already an array or object
         let parsedProofs;
-        if (typeof proofs === 'string') {
-            parsedProofs = JSON.parse(proofs); // Parse if proofs is a JSON string
-        } else {
-            parsedProofs = proofs; // Use directly if it's already an object/array
+        try {
+            if (typeof proofs === 'string') {
+                parsedProofs = JSON.parse(proofs); // Parse if proofs is a JSON string
+            } else {
+                parsedProofs = proofs; // Use directly if it's already an object/array
+            }
+        } catch (error) {
+            return res.status(400).json({
+                message: 'Invalid proofs format',
+                error: error.message
+            });
         }
 
-        // Create a new post with the details and image URLs
         // Create a new post with the details and image URLs
         const newPost = new Post({
             _id: postId,
@@ -233,12 +239,14 @@ const newPost = async (req, res) => {
         });
     } catch (error) {
         console.error('Error creating post:', error);
+        console.log('Request Body:', req.body); // Log request body for debugging
         res.status(500).json({
             message: 'Error creating post',
             error: error.message
         });
     }
 };
+
 
 //this is a function to get all the posts made by a user 
 //the user is an arg to be passed in so it can be re-used many times
