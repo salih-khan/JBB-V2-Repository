@@ -29,7 +29,7 @@
             </div>
             <h3 class="form-main-text">Description</h3>
             <div class="input-wrapper">
-              <div ref="quillEditor" class="description-editor"></div>
+              <div ref="quillContainer" class="description-editor"></div>
             </div>
             <h3 class="form-main-text">Date Information</h3>
             <input type="date" v-model="dateInfo" class="date-input mb-3" />
@@ -200,47 +200,47 @@ export default {
 
     const router = useRouter();
     const proofs = ref([{ title: '', source: '', description: '' }]);
-    const quillEditor = ref(null); // Reference to Quill editor instance
+
+    // Quill editor refs
+    const quillContainer = ref(null); // DOM element for Quill
+    const quillEditor = ref(null); // Quill instance
 
     onMounted(async () => {
-      // Check if the user is logged in, if not redirect to home
-      await fetchUser()
-          .then(() => {
-            if (isAuthenticated.value) {
-              return;
-            } else {
-              router.push('/');
-            }
-          })
-          .catch((error) => {
-            console.log("Error fetching the user in Create.vue: ", error);
-          });
+      try {
+        await fetchUser();
+        if (isAuthenticated.value) {
+          if (quillContainer.value) {
+            quillEditor.value = new Quill(quillContainer.value, {
+              theme: 'snow', // Quill theme
+              placeholder: 'Enter description...',
+              modules: {
+                toolbar: [
+                  [{ header: [1, 2, false] }],
+                  ['bold', 'italic', 'underline'],
+                  [{ list: 'ordered' }, { list: 'bullet' }],
+                  ['link', 'image'],
+                  ['clean'] // Clear formatting
+                ]
+              }
+            });
 
-      if (isAuthenticated.value) {
-        // Initialize Quill editor only if the user is authenticated
-        quillEditor.value = new Quill('.description-editor', {
-          theme: 'snow',  // Quill theme
-          placeholder: 'Enter description...',
-          modules: {
-            toolbar: [
-              [{ header: [1, 2, false] }],
-              ['bold', 'italic', 'underline'],
-              [{ list: 'ordered' }, { list: 'bullet' }],
-              ['link', 'image'],
-              ['clean'] // Clear formatting
-            ]
+            // Listen for Quill content changes
+            quillEditor.value.on('text-change', () => {
+              postDescriptionData.value = quillEditor.value.root.innerHTML;
+            });
+          } else {
+            console.error('Quill container is not available.');
           }
-        });
-
-        // Listen for Quill content changes
-        quillEditor.value.on('text-change', () => {
-          postDescriptionData.value = quillEditor.value.root.innerHTML;
-        });
-      } else {
-        console.error('User is not authenticated, Quill editor not initialized');
+        } else {
+          router.push('/');
+        }
+      } catch (error) {
+        console.error("Error fetching the user in Create.vue:", error);
+        router.push('/');
       }
     });
 
+    // File handling methods
     const handleFileChange = (event) => {
       const allowedTypes = [
         'image/jpeg', 'image/png', 'image/gif', 'image/webp',
@@ -271,57 +271,7 @@ export default {
     const isVideo = (file) => file.type.startsWith('video/');
     const getImageURL = (file) => URL.createObjectURL(file);
 
-    const handleKeyPress = (event, field, index) => {
-      if (field === 'title') {
-        if (event.key === 'Enter') {
-          nextTick(() => {
-            if (postTitleData.value.trim() !== '') {
-            } else {
-              alert('Title cannot be empty.');
-            }
-          });
-        }
-      } else if (field === 'description') {
-        if (event.key === 'Enter') {
-          nextTick(() => {
-            if (postDescriptionData.value.trim() !== '') {
-            } else {
-              alert('Description cannot be empty.');
-            }
-          });
-        }
-      } else {
-        if (!proofs.value[index]) {
-          proofs.value[index] = { title: '', source: '', description: '' };
-        }
-        if (event.key === 'Enter') {
-          nextTick(() => {
-            const proof = proofs.value[index];
-            if (!proof) {
-              console.error(`Proof object at index ${index} does not exist.`);
-              return;
-            }
-            if (field === 'proofTitle') {
-              if (proof.title.trim() !== '') {
-              } else {
-                alert('Title cannot be empty.');
-              }
-            } else if (field === 'proofSource') {
-              if (proof.source.trim() !== '') {
-              } else {
-                alert('Source cannot be empty.');
-              }
-            } else if (field === 'proofDescription') {
-              if (proof.description.trim() !== '') {
-              } else {
-                alert('Description cannot be empty.');
-              }
-            }
-          });
-        }
-      }
-    };
-
+    // Proofs handling methods
     const addMoreProofs = () => {
       proofs.value.push({ title: '', source: '', description: '' });
     };
@@ -332,6 +282,7 @@ export default {
       }
     };
 
+    // Video links handling methods
     const addLink = () => {
       videoLinks.value.push({ url: '' });
     };
@@ -342,6 +293,7 @@ export default {
       }
     };
 
+    // Terms and Conditions modal
     const openTACModal = () => {
       showTermsAndConditions.value = true;
     };
@@ -349,6 +301,7 @@ export default {
       showTermsAndConditions.value = false;
     };
 
+    // Submit post method
     const submitPost = async () => {
       if (!isChecked.value) {
         alert('You must agree to the terms and conditions before submitting.');
@@ -363,12 +316,11 @@ export default {
         }
       }
 
-      isLoading.value = true; // Set loading to true before submission
+      isLoading.value = true; // Show loading spinner
 
       const formData = new FormData();
       formData.append('title', postTitleData.value);
       formData.append('description', postDescriptionData.value); // Quill content
-
       formData.append('date', dateInfo.value);
 
       proofs.value.forEach((proof, index) => {
@@ -394,20 +346,20 @@ export default {
         });
 
         if (response.ok) {
-          isLoading.value = false; // Ensure loading is false after submission
+          isLoading.value = false; // Hide loading spinner
           alert('Post submitted successfully!');
           window.location = '/';
         } else {
-          alert('Failed to submit post');
+          const errorData = await response.json();
+          alert(`Failed to submit post: ${errorData.message || 'Unknown error'}`);
           isLoading.value = false;
         }
       } catch (error) {
         console.error('Error submitting the post:', error);
+        alert('An error occurred while submitting the post.');
         isLoading.value = false;
       }
     };
-
-    onMounted(async () => await fetchUser());
 
     return {
       showTermsAndConditions,
@@ -422,7 +374,6 @@ export default {
       isImage,
       isVideo,
       getImageURL,
-      handleKeyPress,
       addMoreProofs,
       removeLastProof,
       openTACModal,
@@ -430,11 +381,10 @@ export default {
       submitPost,
       isChecked,
       isLoading,
-      isAuthenticated,
-      quillEditor,
       videoLinks,
       addLink,
-      removeLink
+      removeLink,
+      quillContainer // Expose quillContainer to the template
     };
   }
 };
