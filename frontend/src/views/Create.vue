@@ -1,5 +1,5 @@
 <template>
-  <div class="create" v-if="isAuthenticated">
+  <div class="create">
     <Header />
 
     <div class="create-inner">
