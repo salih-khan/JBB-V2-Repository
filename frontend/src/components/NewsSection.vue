@@ -33,9 +33,10 @@
 <script>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useTruncateAndUntag } from '@/composables/useTruncateAndUntag';
 
 export default {
-  name: 'CardGrid',
+  name: 'NewsSection',
   props: {
     posts: {
       type: Array,
@@ -44,25 +45,30 @@ export default {
   },
   setup(props) {
     const router = useRouter();
+    const { truncate } = useTruncateAndUntag();
 
     const visibleCards = computed(() => {
       return props.posts; // All posts are visible (Pagination handled in Home)
     });
 
+    // Truncate and strip HTML tags from description
     const getDescription = (description) => {
-      const maxLength = 250; // Fixed length for the description
-      return description.length > maxLength ? description.substring(0, maxLength) + '...' : description;
+      const maxDescriptionLength = 250;
+      return truncate(description, maxDescriptionLength);
     };
 
+    // Truncate the title to a fixed length
     const getTruncatedTitle = (title) => {
-      const maxTitleLength = 50; // Maximum characters for the title
-      return title.length > maxTitleLength ? title.substring(0, maxTitleLength) + '...' : title;
+      const maxTitleLength = 50;
+      return truncate(title, maxTitleLength);
     };
 
+    // Get media (image or video) source
     const getMediaSrc = (media) => {
       return (media && media.length > 0 ? media[0] : 'https://via.placeholder.com/300x200');
     };
 
+    // Check if the media file is a video based on the file extension
     const isVideo = (media) => {
       if (media && media.length > 0) {
         const videoFormats = ['mp4', 'webm', 'ogg'];
@@ -133,21 +139,16 @@ export default {
   text-align: left;
 }
 
-.card:hover{
+.card:hover {
   cursor: pointer;
 }
+
 .card-text {
   height: 5em; /* Fixed height for description */
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 8; /* Number of lines to show */
-  line-clamp: 8;
+  -webkit-line-clamp: 8; /* Clamp lines for ellipsis */
   -webkit-box-orient: vertical;
-  text-align: justify;
-}
-
-.btn-primary {
-  width: 100%;
 }
 </style>

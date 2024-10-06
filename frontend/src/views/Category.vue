@@ -44,8 +44,8 @@
                 <p class="post-proofs">{{ post.proofs.length }} proofs</p>
               </div>
               <div class="post-details">
-                <h5 class="post-title-default">{{ truncateText(post.title, 50) }}</h5>
-                <p class="post-description">{{ truncateText(post.description, 200) }}</p>
+                <h5 class="post-title-default">{{ post.title }}</h5>
+                <p class="post-description">{{ getDescription(post.description ?? 'Default Description') }}</p>
               </div>
             </div>
           </router-link>
@@ -61,8 +61,9 @@
 import axios from 'axios';
 import Header from '../components/Header.vue';
 import Footer from '../components/Footer.vue';
-import Timeline from '../components/Timeline.vue'
+import Timeline from '../components/Timeline.vue';
 import { ref, onMounted } from 'vue';
+import { useTruncateAndUntag } from '@/composables/useTruncateAndUntag';
 
 export default {
   components: {
@@ -73,7 +74,7 @@ export default {
   setup() {
     const posts = ref([]);
     const apiBaseUrl = process.env.VUE_APP_API_URL;
-
+    const { truncate } = useTruncateAndUntag();
 
     const fetchPosts = async () => {
       try {
@@ -84,9 +85,9 @@ export default {
       }
     };
 
-    const truncateText = (text, maxLength) => {
-      if (!text) return '';
-      return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+    const getDescription = (description) => {
+      const maxDescriptionLength = 200;
+      return truncate(description, maxDescriptionLength);
     };
 
     const getMediaSrc = (media) => {
@@ -108,11 +109,11 @@ export default {
 
     return {
       posts,
-      truncateText,
+      getDescription,
       getMediaSrc,
-      isVideo,
+      isVideo
     };
-  },
+  }
 };
 </script>
 
@@ -120,10 +121,10 @@ export default {
 .category-inner {
   min-height: 100vh;
 }
-.container{
+.container {
   padding: 0px;
 }
-.container-fluid{
+.container-fluid {
   padding: 0px;
 }
 /* Grid Layout for Posts */
@@ -146,9 +147,49 @@ export default {
   justify-content: space-between;
 }
 
-.post-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+.post-image-container {
+  width: 100%;
+  height: 200px; /* Fixed height for the media container */
+  overflow: hidden;
+  display: flex;
+  align-items: center; /* Center media vertically */
+  justify-content: center; /* Center media horizontally */
+}
+
+.post-image, .post-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures media fits well */
+}
+
+.post-details {
+  padding: 15px; /* Padding inside the post card */
+}
+
+.post-title-default {
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  text-align: left;
+}
+
+.post-description {
+  height: 3em; /* Adjust height for description */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Clamp lines for ellipsis */
+  -webkit-box-orient: vertical;
+}
+
+.more-images-badge, .post-proofs {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 2px 5px;
+  border-radius: 5px;
+  font-size: 0.8rem;
 }
 
 .post-link {
@@ -156,87 +197,14 @@ export default {
   color: inherit;
 }
 
-.post-image-container {
-  position: relative;
-  height: 180px; /* Fixed height for the image/video container */
+.post-card:hover {
+  transform: translateY(-10px); /* Lift animation on hover */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
-.post-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.more-images-badge {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: #fff;
-  padding: 5px 10px;
-  border-radius: 12px;
-  font-size: 0.8rem;
-}
-
-.post-proofs {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: #fff;
-  padding: 5px 10px;
-  border-radius: 12px;
-  font-size: 0.8rem;
-}
-
-.post-card:hover{
-  cursor: pointer;
-}
-.all-posts{
-  margin-left: 1rem;
-}
-.post-details {
-  padding: 10px;
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-  /* Removed justify-content: space-between */
-  height: 150px; /* Fixed height for the details section */
-  gap: 0.5rem; /* Add some space between title and description */
-}
-
-.post-title-default {
-  font-size: 1.1rem;
-  color: #333;
-  margin-bottom: 0.2rem; /* Reduced margin for a tighter layout */
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.post-description {
-  font-size: 0.9rem;
-  color: #666;
-  display: -webkit-box;
-  -webkit-line-clamp: 3; /* Show up to 3 lines */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin: 0; /* Remove default margins for tighter alignment */
-}
-
-.post-card:hover .post-title-default,
-.post-card:hover .post-description {
-  opacity: 1;
-}
-
-@media (max-width: 768px) {
-  .posts-grid{
-    gap: 0.25rem;
-  }
-
-  .post-link{
-    margin: 10px;
+@media (max-width: 576px) {
+  .posts-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 posts per row on mobile */
   }
 }
 </style>

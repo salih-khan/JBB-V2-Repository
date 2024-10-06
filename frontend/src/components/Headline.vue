@@ -46,9 +46,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { ref, computed } from 'vue';
 import discordInvite from '../components/discordInvite.vue';
 import { useRouter } from 'vue-router';
+import { useTruncateAndUntag } from '@/composables/useTruncateAndUntag';
 
 export default {
-  name: 'NewsCard',
+  name: 'Headline',
   components: {
     discordInvite
   },
@@ -58,16 +59,14 @@ export default {
       default: () => ({})
     }
   },
-
   setup(props) {
     const router = useRouter();
+    const { truncate } = useTruncateAndUntag();
 
     // Truncated description with optional chaining and nullish coalescing
     const truncatedDescription = computed(() => {
       const description = props.post?.description ?? 'Default Description';
-      return description.length > 150
-          ? description.substring(0, 150) + '...'
-          : description;
+      return truncate(description, 150);
     });
 
     // Image class based on screen size
@@ -113,7 +112,7 @@ export default {
   margin: 2rem; /* general margin for larger screens */
 }
 
-.card:hover{
+.card:hover {
   cursor: pointer;
 }
 
@@ -130,51 +129,9 @@ export default {
   }
 }
 
-.img-fluid, .video-fluid {
+.img-fluid,
+.video-fluid {
   margin: auto;
   border-radius: 4px;
 }
-
-.medium-img, .medium-video {
-  width: 100%;
-  max-height: 300px;
-}
-
-@media (max-width: 576px) {
-  .medium-img, .medium-video {
-    max-height: 200px; /* Reduce the height on mobile for better fit */
-  }
-}
-
-.card-body {
-  text-align: left;
-}
-
-.card-title {
-  margin-bottom: 0.5rem;
-}
-
-.headline {
-  margin: auto;
-  max-width: 1250px;
-  padding: 1rem;
-}
-
-.icons {
-  margin-right: 0.2rem;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: #fff;
-  padding: 5px 10px;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  z-index: 1; /* Make sure proofs are above other content */
-}
-
-/* Responsive tweaks */
-@media (max-width: 576px) {
-  .icons {
-    font-size: 0.7rem; /* Reduce icon size on smaller screens */
-  }
-}
 </style>
-
