@@ -1,7 +1,6 @@
 <template>
   <div class="create">
     <Header />
-
     <div class="create-inner">
       <div class="guidelines container">
         <h4>Guidelines to creating a post</h4>
@@ -14,14 +13,11 @@
           </ul>
         </p>
       </div>
-
       <LoadingSpinner v-if="isLoading" />
-
       <div class="entry-form-wrapper">
         <div class="entry-form">
           <div class="column column1">
             <h2 class="column-title text-center">Post Details</h2>
-
             <h3 class="form-main-text">Title</h3>
             <div class="input-wrapper">
               <input
@@ -31,26 +27,24 @@
                   v-model="postTitleData"
               />
             </div>
-
             <h3 class="form-main-text">Description</h3>
             <div class="input-wrapper">
               <div ref="quillEditor" class="description-editor"></div>
             </div>
-
             <h3 class="form-main-text">Date Information</h3>
-            <input
-                type="date"
-                v-model="dateInfo"
-                class="date-input mb-3"
-            />
-
-            <p style="color: #888; font-size: 0.8em; text-align: center">At this stage all posts will be submitted to the 'Palestine' category. See dev logs for further information</p>
+            <input type="date" v-model="dateInfo" class="date-input mb-3" />
+            <p style="color: #888; font-size: 0.8em; text-align: center">
+              At this stage all posts will be submitted to the 'Palestine'
+              category. See dev logs for further information
+            </p>
           </div>
-
           <div class="column column2">
             <h2>Evidence</h2>
-
-            <div v-for="(proof, index) in proofs" :key="index" class="proof-section">
+            <div
+                v-for="(proof, index) in proofs"
+                :key="index"
+                class="proof-section"
+            >
               <h3>Proof {{ index + 1 }}</h3>
               <div class="input-wrapper">
                 <input
@@ -60,7 +54,6 @@
                     v-model="proof.title"
                 />
               </div>
-
               <div class="input-wrapper">
                 <input
                     type="text"
@@ -69,7 +62,6 @@
                     v-model="proof.source"
                 />
               </div>
-
               <div class="input-wrapper">
                 <textarea
                     placeholder="Description"
@@ -78,59 +70,97 @@
                 ></textarea>
               </div>
             </div>
-
             <p style="color: #888; font-size: 0.8em; text-align: center">
-              For multiple proofs, submit the current one for a new one to be added.
+              For multiple proofs, submit the current one for a new one to be
+              added.
             </p>
-
             <button @click="addMoreProofs" class="minimalist-button">Add</button>
-            <button v-if="proofs.length > 1" @click="removeLastProof" class="minimalist-button" style="margin: 10px;">Remove Last Proof</button>
+            <button
+                v-if="proofs.length > 1"
+                @click="removeLastProof"
+                class="minimalist-button"
+                style="margin: 10px;"
+            >
+              Remove Last Proof
+            </button>
           </div>
-
           <div class="column column3">
-            <h2 class="column-title text-center">Images</h2>
+            <h2 class="column-title text-center">Images/Videos</h2>
             <input
                 type="file"
                 accept="image/*,video/*"
                 @change="handleFileChange"
                 multiple
             />
-
             <div class="images-preview">
               <div v-for="(file, index) in files" :key="index" class="image-preview">
-                <img v-if="isImage(file)" :src="getImageURL(file)" class="preview-img" />
-                <video v-if="isVideo(file)" :src="getImageURL(file)" controls class="preview-video"></video>
+                <img
+                    v-if="isImage(file)"
+                    :src="getImageURL(file)"
+                    class="preview-img"
+                />
+                <video
+                    v-if="isVideo(file)"
+                    :src="getImageURL(file)"
+                    controls
+                    class="preview-video"
+                ></video>
                 <span class="delete-button" @click="removeFile(index)">x</span>
               </div>
             </div>
-
+            <div>
+              <h2 class="column-title text-center">Proof Links</h2>
+              <div
+                  v-for="(link, index) in videoLinks"
+                  :key="index"
+                  class="link-wrapper"
+              >
+                <input
+                    type="text"
+                    placeholder="Enter video link (e.g., YouTube)"
+                    v-model="link.url"
+                    class="link-input"
+                />
+                <span class="delete-button" @click="removeLink(index)">x</span>
+              </div>
+              <button @click="addLink" class="minimalist-button">
+                Add Link
+              </button>
+            </div>
             <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" id="timelineCheck" v-model="addNSFWTag" />
-              <label class="form-check-label" for="timelineCheck" style="margin: 5px;">NSFW and graphical content</label>
+              <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="timelineCheck"
+                  v-model="addNSFWTag"
+              />
+              <label class="form-check-label" for="timelineCheck" style="margin: 5px;">
+                NSFW and graphical content
+              </label>
             </div>
             <p v-if="addNSFWTag" style="color: #888; font-size: 0.8em; text-align: center">
-              This will flag your content as NSFW (Blood, Violence, Sexual Content, etc.)
+              This will flag your content as NSFW (Blood, Violence, Sexual Content,
+              etc.)
             </p>
           </div>
         </div>
-
         <div class="container d-flex submit">
           <div class="dark-box">
             <label class="checkbox-container">
               <input type="checkbox" required v-model="isChecked" />
               <span class="checkmark"></span>
-              <span class="checkbox-text">I agree to the <button id="TAC" @click="openTACModal">terms and conditions</button></span>
+              <span class="checkbox-text">
+                I agree to the
+                <button id="TAC" @click="openTACModal">terms and conditions</button>
+              </span>
             </label>
             <button class="styled-button" @click="submitPost">Submit</button>
           </div>
         </div>
       </div>
-
-      <TermsAndConditions v-if="showTermsAndConditions" @close="closeTACModal"/>
-
+      <TermsAndConditions v-if="showTermsAndConditions" @close="closeTACModal" />
     </div>
-
-    <Footer/>
+    <Footer />
   </div>
 </template>
 
@@ -142,7 +172,6 @@ import Header from '@/components/Header.vue';
 import Footer from '@/components/Footer.vue';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { useRouter } from 'vue-router'
-
 import Quill from 'quill'; // Import Quill
 import 'quill/dist/quill.snow.css'; // Import Quill CSS
 
@@ -157,71 +186,60 @@ export default {
     //for the spinner
     const isLoading = ref(false);
     const apiBaseUrl = process.env.VUE_APP_API_URL;
-
     const showTermsAndConditions = ref(false);
     const { isAuthenticated, fetchUser } = useAuthValidate();
     const files = ref([]);
     const dateInfo = ref('');
     const addNSFWTag = ref(false);
     const isChecked = ref(false);  // Track checkbox state
-
     const postTitleData = ref('');
     const postDescriptionData = ref(''); // Data to store Quill content
 
+    // For video/proof links
+    const videoLinks = ref([{ url: '' }]);
+
     const router = useRouter();
-
-
-    const proofs = ref([
-      {
-        title: '',
-        source: '',
-        description: '',
-      }
-    ]);
-
+    const proofs = ref([{ title: '', source: '', description: '' }]);
     const quillEditor = ref(null); // Reference to Quill editor instance
 
-      onMounted(async () => {
-
-        //check if the user is logged in
-        //if not then return to home
-        await fetchUser()
-            .then(() => {
-              if(isAuthenticated){
-                return;
-              }else{
-                router.push('/');
-              }
-            })
-            .catch((error) => {
-              console.log("Error fetching the user in Create.vue: ", error);
-            })
-
-        if (isAuthenticated.value) {
-          // Initialize Quill editor only if the user is authenticated
-          quillEditor.value = new Quill('.description-editor', {
-            theme: 'snow',  // Quill theme
-            placeholder: 'Enter description...',
-            modules: {
-              toolbar: [
-                [{'header': [1, 2, false]}],
-                ['bold', 'italic', 'underline'],
-                [{'list': 'ordered'}, {'list': 'bullet'}],
-                ['link', 'image'],
-                ['clean'] // Clear formatting
-              ]
+    onMounted(async () => {
+      // Check if the user is logged in, if not redirect to home
+      await fetchUser()
+          .then(() => {
+            if (isAuthenticated.value) {
+              return;
+            } else {
+              router.push('/');
             }
+          })
+          .catch((error) => {
+            console.log("Error fetching the user in Create.vue: ", error);
           });
 
-          // Listen for Quill content changes
-          quillEditor.value.on('text-change', () => {
-            postDescriptionData.value = quillEditor.value.root.innerHTML;
-          });
-        } else {
-          console.error('User is not authenticated, Quill editor not initialized');
-        }
-      });
+      if (isAuthenticated.value) {
+        // Initialize Quill editor only if the user is authenticated
+        quillEditor.value = new Quill('.description-editor', {
+          theme: 'snow',  // Quill theme
+          placeholder: 'Enter description...',
+          modules: {
+            toolbar: [
+              [{ header: [1, 2, false] }],
+              ['bold', 'italic', 'underline'],
+              [{ list: 'ordered' }, { list: 'bullet' }],
+              ['link', 'image'],
+              ['clean'] // Clear formatting
+            ]
+          }
+        });
 
+        // Listen for Quill content changes
+        quillEditor.value.on('text-change', () => {
+          postDescriptionData.value = quillEditor.value.root.innerHTML;
+        });
+      } else {
+        console.error('User is not authenticated, Quill editor not initialized');
+      }
+    });
 
     const handleFileChange = (event) => {
       const allowedTypes = [
@@ -274,13 +292,8 @@ export default {
         }
       } else {
         if (!proofs.value[index]) {
-          proofs.value[index] = {
-            title: '',
-            source: '',
-            description: ''
-          };
+          proofs.value[index] = { title: '', source: '', description: '' };
         }
-
         if (event.key === 'Enter') {
           nextTick(() => {
             const proof = proofs.value[index];
@@ -288,7 +301,6 @@ export default {
               console.error(`Proof object at index ${index} does not exist.`);
               return;
             }
-
             if (field === 'proofTitle') {
               if (proof.title.trim() !== '') {
               } else {
@@ -311,16 +323,22 @@ export default {
     };
 
     const addMoreProofs = () => {
-      proofs.value.push({
-        title: '',
-        source: '',
-        description: ''
-      });
+      proofs.value.push({ title: '', source: '', description: '' });
     };
 
     const removeLastProof = () => {
       if (proofs.value.length > 1) {
         proofs.value.pop();
+      }
+    };
+
+    const addLink = () => {
+      videoLinks.value.push({ url: '' });
+    };
+
+    const removeLink = (index) => {
+      if (videoLinks.value.length > 1) {
+        videoLinks.value.splice(index, 1);
       }
     };
 
@@ -365,6 +383,10 @@ export default {
 
       formData.append('nsfw', addNSFWTag.value);
 
+      videoLinks.value.forEach((link, index) => {
+        formData.append(`videoLinks[${index}][url]`, link.url);
+      });
+
       try {
         const response = await fetch(`${apiBaseUrl}/api/newPost`, {
           method: 'POST',
@@ -377,15 +399,15 @@ export default {
           window.location = '/';
         } else {
           alert('Failed to submit post');
+          isLoading.value = false;
         }
       } catch (error) {
         console.error('Error submitting the post:', error);
+        isLoading.value = false;
       }
     };
 
-    onMounted(async () => {
-      await fetchUser(); // Call to fetch user data
-    });
+    onMounted(async () => await fetchUser());
 
     return {
       showTermsAndConditions,
@@ -409,7 +431,10 @@ export default {
       isChecked,
       isLoading,
       isAuthenticated,
-      quillEditor
+      quillEditor,
+      videoLinks,
+      addLink,
+      removeLink
     };
   }
 };
@@ -729,6 +754,32 @@ export default {
 .guidelines b {
   color: #000;
   font-weight: 600;
+}
+
+/* Link inputs and buttons */
+.link-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.link-input {
+  flex: 1;
+  padding: 10px;
+  margin-right: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.delete-button {
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 5px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 0.8em;
 }
 
 /* Mobile Layout */
