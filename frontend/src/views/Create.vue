@@ -188,9 +188,9 @@ export default {
             placeholder: 'Enter description...',
             modules: {
               toolbar: [
-                [{ 'header': [1, 2, false] }],
+                [{'header': [1, 2, false]}],
                 ['bold', 'italic', 'underline'],
-                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{'list': 'ordered'}, {'list': 'bullet'}],
                 ['link', 'image'],
                 ['clean'] // Clear formatting
               ]
@@ -205,7 +205,7 @@ export default {
           console.error('User is not authenticated, Quill editor not initialized');
         }
       });
-
+    });
 
 
     const handleFileChange = (event) => {
