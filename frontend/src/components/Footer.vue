@@ -62,6 +62,7 @@ footer {
   position: relative;
   bottom: 0;
   padding-top: 5rem;
+  margin-top: 5rem;
   width: 100%;
 }
 </style>
