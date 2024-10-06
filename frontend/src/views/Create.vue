@@ -32,7 +32,7 @@
               />
             </div>
 
-            <h3 class="form-main-text desc">Description</h3>
+            <h3 class="form-main-text">Description</h3>
             <div class="input-wrapper">
               <div ref="quillEditor" class="description-editor"></div>
             </div>
