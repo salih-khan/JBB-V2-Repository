@@ -1,6 +1,6 @@
 <template>
   <div class="headline">
-    <discordInvite />
+    <discordInvite/>
     <div class="row">
       <div class="col-12 d-flex align-items-stretch" @click="post ? goToPost(post._id) : null">
         <div class="card w-100 d-flex flex-column flex-md-row">
@@ -22,7 +22,7 @@
             </template>
           </div>
           <div class="col-md-6 d-flex flex-column justify-content-start p-3">
-            <h5 class="card-title">{{ post?.title ?? 'Default Title' }}</h5>
+            <h5 class="headline-title">{{ truncatedTitle }}</h5>
             <div class="d-flex mb-2">
               <!-- Display number of proofs -->
               <button class="icons">
@@ -33,7 +33,7 @@
                 +{{ post?.images?.length ?? 0 }} Image{{ (post?.images?.length ?? 0) > 1 ? 's' : '' }}
               </button>
             </div>
-            <p class="card-text">{{ truncatedDescription }}</p>
+            <p class="headline-description">{{ truncatedDescription }}</p>
           </div>
         </div>
       </div>
@@ -49,7 +49,7 @@ import { useRouter } from 'vue-router';
 import { useTruncateAndUntag } from '@/composables/useTruncateAndUntag';
 
 export default {
-  name: 'Headline',
+  name: 'NewsCard',
   components: {
     discordInvite
   },
@@ -59,15 +59,14 @@ export default {
       default: () => ({})
     }
   },
+
   setup(props) {
     const router = useRouter();
     const { truncate } = useTruncateAndUntag();
 
-    // Truncated description with optional chaining and nullish coalescing
-    const truncatedDescription = computed(() => {
-      const description = props.post?.description ?? 'Default Description';
-      return truncate(description, 150);
-    });
+    // Truncate text with desired max length
+    const truncatedTitle = computed(() => truncate(props.post?.title || '', 100)); // Adjust max length as needed
+    const truncatedDescription = computed(() => truncate(props.post?.description || '', 80)); // Adjust max length as needed
 
     // Image class based on screen size
     const imgClass = computed(() => {
@@ -94,8 +93,9 @@ export default {
     }
 
     return {
-      truncatedDescription,
       imgClass,
+      truncatedTitle,
+      truncatedDescription,
       getMediaSrc,
       isVideo,
       goToPost
@@ -112,7 +112,7 @@ export default {
   margin: 2rem; /* general margin for larger screens */
 }
 
-.card:hover {
+.card:hover{
   cursor: pointer;
 }
 
@@ -129,9 +129,51 @@ export default {
   }
 }
 
-.img-fluid,
-.video-fluid {
+.img-fluid, .video-fluid {
   margin: auto;
   border-radius: 4px;
 }
+
+.medium-img, .medium-video {
+  width: 100%;
+  max-height: 300px;
+}
+
+@media (max-width: 576px) {
+  .medium-img, .medium-video {
+    max-height: 200px; /* Reduce the height on mobile for better fit */
+  }
+}
+
+.card-body {
+  text-align: left;
+}
+
+.card-title {
+  margin-bottom: 0.5rem;
+}
+
+.headline {
+  margin: auto;
+  max-width: 1250px;
+  padding: 1rem;
+}
+
+.icons {
+  margin-right: 0.2rem;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  z-index: 1; /* Make sure proofs are above other content */
+}
+
+/* Responsive tweaks */
+@media (max-width: 576px) {
+  .icons {
+    font-size: 0.7rem; /* Reduce icon size on smaller screens */
+  }
+}
 </style>
+
