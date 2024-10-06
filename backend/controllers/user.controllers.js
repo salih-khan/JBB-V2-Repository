@@ -188,8 +188,12 @@ const newPost = async (req, res) => {
             description,
             date,
             proofs,
-            nsfw
+            nsfw,
+            videoLinks
         } = req.body;
+
+        const videoLinksArray = JSON.parse(videoLinks);
+
         const files = req.files;
         const nameId = req.user.nameId; // Get the user's nameId
         const postId = new mongoose.Types.ObjectId(); // Generate a new ObjectId for the post
@@ -215,7 +219,8 @@ const newPost = async (req, res) => {
             proofs: parsedProofs,
             images: imageUrls,
             nsfw,
-            nameId: nameId
+            nameId: nameId,
+            videoLinks: videoLinksArray
         });
 
         // Save the post to MongoDB

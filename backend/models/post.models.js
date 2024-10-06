@@ -16,6 +16,11 @@ const initializeModels = async () => {
     description: { type: String, required: true },
   }, { _id: false });
 
+  const videoLinkSchema = new mongoose.Schema({
+    url: {type: String, required: true},
+  }, {_id: false });
+
+
   // Main schema for the post
   const postSchema = new mongoose.Schema({
     title: { type: String, required: true },
@@ -24,7 +29,8 @@ const initializeModels = async () => {
     proofs: [proofSchema],  // Array of proofs
     images: [String],       // Array of S3 image URLs
     nsfw: { type: Boolean, default: false },  // Flag for NSFW content
-    nameId: { type: String }
+    nameId: { type: String },
+    videoLinks: [videoLinkSchema]
   }, {
     collection: 'palestine'  // The collection in MongoDB
   });
