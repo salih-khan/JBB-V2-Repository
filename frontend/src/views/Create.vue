@@ -441,6 +441,7 @@ export default {
 
 .description-editor {
   min-height: 200px;
+
   border: 1px solid #ddd;
   border-radius: 5px;
   padding: 10px;
