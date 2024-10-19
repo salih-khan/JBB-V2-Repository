@@ -56,20 +56,22 @@ export default defineComponent({
         description: 'This will most certainly change in the near future as the user base grows a wide variety of topics will ' +
                      'become available. ',
       },
+      {
+        id: 3,
+        title: 'Currently looking for journalists and bloggers',
+        date: '2024-10-19',
+        description: 'Right now we are in the process of getting journalists and bloggers invloved to start reporting on the ongoing genocide and war' +
+                     ' .To get involved join the discord server on the home page!',
+      }
     ]);
 
     // Sample data for Future Plans
     const futurePlans = ref([
       {
         id: 1,
-        title: 'User Profile Overhaul',
-        description: 'We plan to overhaul user profiles with more customization and security.',
-      },
-      {
-        id: 2,
-        title: 'Mobile App Development',
-        description: 'Development is underway for mobile apps on iOS and Android platforms.',
-      },
+        title: 'User ID changeable only once',
+        description: 'the unique ID for every account e.g user_1234 will be changed so each user can change it at any time but only once!.',
+      }
     ]);
 
     // Date formatting function
