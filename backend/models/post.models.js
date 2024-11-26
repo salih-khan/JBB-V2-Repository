@@ -30,7 +30,8 @@ const initializeModels = async () => {
     images: [String],       // Array of S3 image URLs
     nsfw: { type: Boolean, default: false },  // Flag for NSFW content
     nameId: { type: String },
-    videoLinks: [videoLinkSchema]
+    videoLinks: [videoLinkSchema],
+    createdAt: { type: Date, default: Date.now }
   }, {
     collection: 'palestine'  // The collection in MongoDB
   });

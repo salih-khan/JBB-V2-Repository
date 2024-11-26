@@ -11,6 +11,10 @@ const {
     getIndividualPost
 } = require('../controllers/user.controllers.js');
 
+
+const { savePosts } = require('./redditBot'); // Import the bot functions
+
+
 const router = express.Router();
 
 // Set up multer for file uploads
@@ -62,5 +66,18 @@ router.get('/api/getAllPostsFromCategory', getAllPostsFromCategory);
 
 //when the user wants to see the info for 1 post alone
 router.get('/api/getIndividualPost/:postId', getIndividualPost);
+
+//due to this being a bot the functionality is done here for seperation concernss
+app.get('/api/fetch-reddit-posts', async (req, res) => {
+    const { subreddit } = req.query;
+    try {
+      await savePosts(subreddit || 'Palestine');
+      res.status(200).send('Posts fetched and saved successfully.');
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      res.status(500).send('Error fetching posts: ' + error.message);
+    }
+  });
+
 
 module.exports = router;
